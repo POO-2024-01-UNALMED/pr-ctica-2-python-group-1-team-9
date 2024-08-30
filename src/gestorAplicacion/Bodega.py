@@ -27,8 +27,8 @@ class Bodega:
     def getProductos(self):
         return self.productos
 
-    def setProductos(self, prodcutos):
-        self.productos = prodcutos
+    def setProductos(self, productos):
+        self.productos = productos
 
     def agregarProducto(self,producto):
         self.productos.add(producto)
