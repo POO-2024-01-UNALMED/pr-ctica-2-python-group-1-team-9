@@ -1,8 +1,8 @@
-import Persona
+from .Persona import Persona
 
 class Empleado(Persona):
     _actual_id = 0
-    _empleados = []
+    empleados = []
 
     def __init__(self, nombre, cedula, supermercado, cargo, salario):
         super().__init__(nombre, cedula, cargo)
@@ -12,41 +12,34 @@ class Empleado(Persona):
         Empleado._actual_id += 1
         self._id = Empleado._actual_id
         supermercado.agregar_empleado(self)
-        Empleado._empleados.append(self)
+        Empleado.empleados.append(self)
 
     def informacion(self):
-        return f"{self.cargo} {self.nombre} con cédula {self.cedula}"
+        return f"{self.get_cargo()} {self.get_nombre()} con cédula {self.get_cedula()}"
+    
 
-    @property
-    def id(self):
+    def get_id(self):
         return self._id
 
-    @id.setter
-    def id(self, id):
+    def set_id(self, id):
         self._id = id
 
-    @property
-    def activo(self):
+    def get_activo(self):
         return self._activo
 
-    @activo.setter
-    def activo(self, activo):
+    def set_activo(self, activo):
         self._activo = activo
 
-    @property
-    def salario(self):
+    def get_salario(self):
         return self._salario
 
-    @salario.setter
-    def salario(self, salario):
+    def set_salario(self, salario):
         self._salario = salario
 
-    @property
-    def supermercado(self):
+    def get_supermercado(self):
         return self._supermercado
 
-    @supermercado.setter
-    def supermercado(self, supermercado):
+    def set_supermercado(self, supermercado):
         self._supermercado = supermercado
 
     def __str__(self):

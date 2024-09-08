@@ -1,9 +1,9 @@
-import Bodega
-import Empleado
-import TipoProducto
-import Producto
-import Orden
-import Unidad
+from .Bodega import Bodega
+from .Empleado import Empleado
+from .TipoProducto import TipoProducto
+from .Producto import Producto
+from .Orden import Orden
+from .Unidad import Unidad
 import random
 import datetime
 
@@ -116,3 +116,4 @@ class Supermercado:
             indice = producto.get_supermercados().index(self)
             return producto.get_unidades_supermercado()[indice]
         return 0
+    

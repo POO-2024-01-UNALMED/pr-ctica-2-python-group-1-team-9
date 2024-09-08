@@ -1,5 +1,5 @@
-import TipoProducto
-import Unidad
+from .TipoProducto import TipoProducto
+from .Unidad import Unidad
 
 class Producto:
     actual_id = 0

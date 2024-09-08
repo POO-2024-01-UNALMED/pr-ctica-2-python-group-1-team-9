@@ -1,3 +1,7 @@
+import Producto
+import TipoProducto
+import Unidad
+
 class Descuento:
     _descuentos = []
 
