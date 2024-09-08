@@ -194,6 +194,14 @@ ventanaInicio.title("Ventana Principal de inicio")
 ventanaInicio.geometry("768x432+384+172")
 ventanaInicio.grid_propagate(False)  # "grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
 
+menuBarVentanaInicio = tk.Menu(ventanaInicio)
+ventanaInicio.config(menu=menuBarVentanaInicio)
+menuInicio = tk.Menu(menuBarVentanaInicio)
+menuInicio.config(tearoff=0)  # Para que no añada esos guiones que desplegan el menú en una ventana nueva
+menuBarVentanaInicio.add_cascade(label="Inicio", menu=menuInicio)
+menuInicio.add_command(label="Salir de la aplicación", command=lambda: ventanaInicio.destroy())
+menuInicio.add_command(label="Descripción del sistema")
+
 hojasDeVida = [
     "Hoja de vida de Jose",
     "Hoja de vida de Oscar",
