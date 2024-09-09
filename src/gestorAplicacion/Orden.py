@@ -47,3 +47,27 @@ class Orden:
             unidad.tipo.agregar_unidad(unidad, unidad.ubicacion)
             unidad.ubicacion.agregar_producto(unidad)
         self.productos = None
+
+    def set_supermercado(self, supermercado):
+        self.supermercado = supermercado
+
+    def get_supermercado(self):
+        return self.supermercado
+    
+    def set_empleado(self, empleado):
+        self.empleado = empleado
+
+    def get_empleado(self):
+        return self.empleado
+    
+    def set_cliente(self, cliente):
+        self.cliente = cliente
+
+    def get_cliente(self):
+        return self.cliente
+    
+    def set_productos(self, productos):
+        self.productos = productos
+
+    def get_productos(self):
+        return self.productos
