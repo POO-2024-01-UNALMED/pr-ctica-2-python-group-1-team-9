@@ -31,6 +31,10 @@ class Persona(ABC):
     
     def get_cargo(self):
         return self.cargo
+    
+    @classmethod
+    def get_personas():
+        return Persona.get_personas
 
     @classmethod
     def get_personas(cls):

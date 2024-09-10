@@ -19,7 +19,7 @@ class Supermercado:
         self.productos_promocion = []
         self.paquetes_promocion = []
         Supermercado.supermercados.append(self)
-
+    
     def get_nombre(self) -> str:
         return self.nombre
 

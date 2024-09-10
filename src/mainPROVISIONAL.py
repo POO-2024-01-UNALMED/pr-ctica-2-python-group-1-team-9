@@ -5,6 +5,11 @@ from gestorAplicacion.Supermercado import Supermercado
 from gestorAplicacion.Orden import Orden
 from gestorAplicacion.TipoProducto import TipoProducto
 from gestorAplicacion.Producto import Producto
+import Intento_serializar
+
+#creamos listas para serializar los elementos 
+Lista_supermercados= Supermercado.get_supermercados
+
 
 #Funcionalidades
 
