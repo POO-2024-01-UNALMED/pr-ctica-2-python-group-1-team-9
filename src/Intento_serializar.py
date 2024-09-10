@@ -4,33 +4,45 @@ from gestorAplicacion.Producto import Producto
 from gestorAplicacion.Descuento import Descuento
 from gestorAplicacion.Persona import Persona
 
-
-lista_de_objetos = []
-
 class Serializable:
-  def __init__():
-    self.lista_de_objetos = lista_de_objetos
+    def __init__(self):
+        self.lista_de_objetos_Supermercado = Supermercado.get_supermercados() 
+        self.lista_de_objetos_Producto = Producto.get_lista_productos()  
+        self.lista_de_objetos_Descuento = Descuento.get_descuentos() 
+        self.lista_de_objetos_Persona = Persona.get_personas()  
 
-    lista_de_objetos_Supermercado = lista_de_objetos_Supermercado.append(Supermercado.get_supermercados())
-    lista_de_objetos_Producto = lista_de_objetos_Producto.append(Producto.get_lista_productos())
-    lista_de_objetos_Descuento = lista_de_objetos_Descuento.append(Descuento.get_descuentos())  
-    lista_de_objetos_Persona = lista_de_objetos_Persona.append(Persona.get_personas()) 
+        self.lista_de_objetos = [
+            self.lista_de_objetos_Supermercado,
+            self.lista_de_objetos_Producto,
+            self.lista_de_objetos_Descuento,
+            self.lista_de_objetos_Persona
+        ]
 
-    lista_de_objetos = lista_de_objetos.append(lista_de_objetos_Supermercado)     
-    lista_de_objetos = lista_de_objetos.append(lista_de_objetos_Producto)   
-    lista_de_objetos = lista_de_objetos.append(lista_de_objetos_Descuento) 
-    lista_de_objetos = lista_de_objetos.append(lista_de_objetos_Persona)                                                                                                                                                                                                                                                                   
+    def serializar(self):
+        
+        with open("lista_de_objetos", "wb") as fichero_binario:
+            pickle.dump(self.lista_de_objetos, fichero_binario)
 
-  
-  fichero_binario=open("lista_de_objetos", "wb")
+    
+        print(f"Los supermercados guardados son los siguientes: {self.lista_de_objetos_Supermercado}")
+        print(f"Los productos guardados son los siguientes: {self.lista_de_objetos_Producto}")
+        print(f"Los descuentos guardados son los siguientes: {self.lista_de_objetos_Descuento}")
+        print(f"Las personas guardadas son los siguientes: {self.lista_de_objetos_Persona}")
 
-  pickle.dump(lista_de_objetos, fichero_binario)
+    @staticmethod
+    def deserializar():
+        
+        with open("lista_de_objetos", "rb") as lo_guardado:
+            lista = pickle.load(lo_guardado)
+        return lista
 
-  fichero_binario.close()
 
-lo_guardado = open("lista_de_objetos", "rb")
-lista = pickle.load(lo_guardado)
-print(lista)
+serializable = Serializable()
+serializable.serializar()
+
+
+lista_deserializada = Serializable.deserializar()
+print("Lista deserializada:", lista_deserializada)
 
 
 
