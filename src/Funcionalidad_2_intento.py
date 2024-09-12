@@ -146,10 +146,10 @@ def contar_tipos_diferentes(unidades):
     
 
 
-def administarrInventario(Supermercado):
+def administrarInventario(Supermercado):
 
   #primero que todo debemos tener la info de los supermercados, personas y empleados 
-  lista_de_supermercados= Supermercado.get_supermertcados()
+  lista_de_supermercados= Supermercado.getSupermercados()
   lista_de_personas = Persona.get_personas()
   lista_de_empleados = Empleado.get_empleados()
 
@@ -277,4 +277,4 @@ if __name__ == "__main__":
     
     supermercado.agregar_bodega(bodega1)
     
-    administrar_inventario(supermercado)
+    administrarInventario(supermercado)

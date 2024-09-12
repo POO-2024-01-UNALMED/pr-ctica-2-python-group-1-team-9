@@ -1,2 +1,12 @@
 
 *.pyc
+src/gestorAplicacion/__pycache__/VentanaPrincipal.cpython-310.pyc
+src/gestorAplicacion/__pycache__/ventanaInicio.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Supermercado.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Producto.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Orden.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Empleado.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Descuento.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Cliente.cpython-310.pyc
+src/gestorAplicacion/__pycache__/Bodega.cpython-310.pyc
+*.pyc

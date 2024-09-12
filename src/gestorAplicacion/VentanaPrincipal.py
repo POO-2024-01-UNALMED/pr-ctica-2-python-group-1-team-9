@@ -3,7 +3,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from .ventanaInicio import VentanaInicio
 
-class VentanaPrincipal:
+class VentanaPrincipal():
     def __init__(self, root):
         # Configuración basica de la ventana
         self.root = root
@@ -12,6 +12,7 @@ class VentanaPrincipal:
         self.root.grid_propagate(False) # grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
 
         self.segundaventana = None # Será la ventana de inicio
+        self.VentanaInicio = None
 
         self.hojasDeVida = [
             "Hoja de vida de Jose", "Hoja de vida de Oscar", 
@@ -318,6 +319,6 @@ class VentanaPrincipal:
         self.contador = (self.contador + 1) % 4
 
     def crearVentanaInicio(self):
-        #self.withdraw()
-        self.segundaventana = tk.Toplevel()
-        VentanaInicio(self.segundaventana)
+        self.root.withdraw()
+        self.segundaventana = tk.Toplevel(self.root)
+        self.VentanaInicio = VentanaInicio(self.segundaventana, self)
