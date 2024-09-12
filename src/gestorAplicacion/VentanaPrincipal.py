@@ -8,15 +8,17 @@ class VentanaPrincipal():
         # Configuración basica de la ventana
         self.root = root
         self.root.title("Ventana Principal de Inicio")
-        self.root.geometry("768x432+384+172")
+        self.root.geometry("1000x550+284+72")
         self.root.grid_propagate(False) # grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
 
         self.segundaventana = None # Será la ventana de inicio
         self.VentanaInicio = None
 
         self.hojasDeVida = [
-            "Hoja de vida de Jose", "Hoja de vida de Oscar", 
-            "Hoja de vida de Simon", "Hoja de vida de Julian"
+            "Soy Jose Manuel, tengo 20 años, soy de Pueblorrico, un pequeño municipio de Antioquia, me gusta mucho salir a caminar y pasar tiempo en familia, este es mi primer semestre en la carrera (me traslade desde mecánica) y estoy entusiamado por aprender 😀",
+            "Hoja de vida de Oscar", 
+            "Hoja de vida de Simon", 
+            "Hoja de vida de Julian"
         ]
         
         # Variables para la logica en el manejo de las fotos
@@ -143,7 +145,7 @@ class VentanaPrincipal():
         self.frameP5.pack_propagate(False)
 
         # Boton p5 es el que está dentro de p5 y se encarga de cambiar las hojas de vida y las fotos de p6
-        self.botonP5 = tk.Button(self.frameP5, text="Hojas de vida de los desarrolladores", 
+        self.botonP5 = tk.Button(self.frameP5, text="Hojas de vida de los desarrolladores", wraplength=400  ,
                                  font=("Arial"), bg="gray90", command=self.cambioHojaDeVida)
         self.botonP5.pack(expand=True, fill="both")
 
