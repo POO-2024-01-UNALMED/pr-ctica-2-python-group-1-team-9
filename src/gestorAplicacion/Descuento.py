@@ -1,6 +1,6 @@
-from Producto import Producto
-from TipoProducto import TipoProducto
-from Unidad import Unidad
+from gestorAplicacion.Producto import Producto
+from gestorAplicacion.TipoProducto import TipoProducto
+from gestorAplicacion.Unidad import Unidad
 
 class Descuento:
     _descuentos = []

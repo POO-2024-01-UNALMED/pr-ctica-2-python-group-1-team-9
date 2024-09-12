@@ -1,10 +1,10 @@
 class Bodega:
-    def ___init__(self, nombre, barrio, supermercado, productos, promos):
+    def __init__(self, nombre, barrio, supermercado):
         self.nombre = nombre
         self.barrio = barrio
         self.supermercado = supermercado
-        self.productos = productos
-        self.promos = promos
+        self.productos = []
+        self.promos = []
 
     def getNombre(self):
         return self.nombre
@@ -31,7 +31,7 @@ class Bodega:
         self.productos = productos
 
     def agregarProducto(self,producto):
-        self.productos.add(producto)
+        self.productos.append(producto)
 
     def quitarProducto(self,producto):
         self.productos.remove(producto)

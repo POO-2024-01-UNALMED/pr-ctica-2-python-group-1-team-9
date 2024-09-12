@@ -1,5 +1,5 @@
-from TipoProducto import TipoProducto
-from Unidad import Unidad
+from gestorAplicacion.TipoProducto import TipoProducto
+from gestorAplicacion.Unidad import Unidad
 
 class Producto:
     actual_id = 0

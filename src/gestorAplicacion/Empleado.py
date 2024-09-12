@@ -1,4 +1,4 @@
-from Persona import Persona
+from gestorAplicacion.Persona import Persona
 
 class Empleado(Persona):
     _actual_id = 0

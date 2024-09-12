@@ -1,9 +1,9 @@
-from Bodega import Bodega
-from Empleado import Empleado
-from TipoProducto import TipoProducto
-from Producto import Producto
-from Orden import Orden
-from Unidad import Unidad
+from gestorAplicacion.Bodega import Bodega
+from gestorAplicacion.Empleado import Empleado
+from gestorAplicacion.TipoProducto import TipoProducto
+from gestorAplicacion.Producto import Producto
+from gestorAplicacion.Orden import Orden
+from gestorAplicacion.Unidad import Unidad
 import random
 import datetime
 
