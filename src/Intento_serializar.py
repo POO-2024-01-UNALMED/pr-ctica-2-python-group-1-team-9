@@ -43,18 +43,3 @@ serializable.serializar()
 
 lista_deserializada = Serializable.deserializar()
 print("Lista deserializada:", lista_deserializada)
-
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
