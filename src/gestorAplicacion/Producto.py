@@ -62,7 +62,7 @@ class Producto:
     def getUnidades(self):
         return self.unidades
 
-    def getUnidadesSupermercado(self, supermercado):
+    def getUnidadesDelSupermercado(self, supermercado):
         unidadessup = []
         for bodega in supermercado.getBodegas():
             for unidad in bodega.getProductos():

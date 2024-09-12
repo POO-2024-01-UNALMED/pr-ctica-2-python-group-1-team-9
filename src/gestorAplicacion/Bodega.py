@@ -3,6 +3,7 @@ class Bodega:
         self.nombre = nombre
         self.barrio = barrio
         self.supermercado = supermercado
+        supermercado.agregarBodega(self)
         self.productos = []
         self.promos = []
 

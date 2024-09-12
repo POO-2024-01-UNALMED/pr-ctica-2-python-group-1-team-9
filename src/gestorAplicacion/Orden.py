@@ -71,3 +71,9 @@ class Orden:
 
     def getProductos(self):
         return self.productos
+    
+    def setId(self, id):
+        self.id = id
+
+    def getId(self):
+        return self.id

@@ -6,20 +6,13 @@ from gestorAplicacion.Orden import Orden
 from gestorAplicacion.TipoProducto import TipoProducto
 from gestorAplicacion.Producto import Producto
 from gestorAplicacion.Unidad import Unidad
-import Intento_serializar
+from gestorAplicacion.Descuento import Descuento
+from gestorAplicacion.Bodega import Bodega
+import pickle
 
 barraDeSeparacion = "______________________________________________________________________________________________________"
-#creamos listas para serializar los elementos 
-Lista_supermercados= Supermercado.getSupermercados
-
 
 #Funcionalidades
-
-#F1
-supermercado1 = Supermercado(nombre="Supermercado Central", saldo=5000.0)
-clientes = [Cliente(nombre="Julian", cedula="1"), Cliente("Julio", "2")]
-empleado1 = [Empleado(nombre="Guzman", cedula="2", supermercado=supermercado1, cargo="Empleado", salario="100"), Empleado(nombre="David", cedula="22", supermercado=supermercado1, cargo="Empleado", salario="100")]
-supermercado1.agregarEmpleado(empleado1)
 
 def crearOrden():
     supermercados = Supermercado.getSupermercados()
@@ -48,7 +41,7 @@ def crearOrden():
         print("\n=== Lista de Empleados ===")
         for i, persona in enumerate(empleados, start=1):
             print(f"{i}. {persona.informacion()}")
-            if i == len(empleado1):
+            if i == len(empleados):
                 break
 
         try:
@@ -87,6 +80,7 @@ def crearOrden():
             nuevo_cliente = Cliente(nombre, cedula)
             clientes.append(nuevo_cliente)
             print(f"\nCliente {nombre} con cédula {cedula} creado con éxito.")
+            cliente = nuevo_cliente
             break
         else:
             print("- Opción inválida, por favor intente de nuevo.")
@@ -205,7 +199,7 @@ def agregarProducto(orden):
             unienof = []
             unisinof = []
 
-            for unidad in lista1[opcionproducto - 1].getUnidades(orden.getSupermercado()):
+            for unidad in lista1[opcionproducto - 1].getUnidadesDelSupermercado(orden.getSupermercado()):
                 if unidad.isOferta():
                     unienof.append(unidad)
                 else:
@@ -433,56 +427,147 @@ def verificarVencimiento(supermercado, dias=0):
 
 
 
-
+def deserializar():
+    pkldescuentos = open("src/tmp/descuentos.pkl", "rb")
+    pklpersonas = open("src/tmp/personas.pkl", "rb")
+    pklproductos = open("src/tmp/productos.pkl", "rb")
+    pklsupermercados = open("src/tmp/supermercados.pkl", "rb")
+    Descuento.setDescuentos = pickle.load(pkldescuentos)
+    Persona.setPersonas = pickle.load(pklpersonas)
+    Producto.setListaProductos = pickle.load(pklproductos)
+    Supermercado.setSupermercados = pickle.load(pklsupermercados)
+    pkldescuentos.close()
+    pklpersonas.close()
+    pklproductos.close()
+    pklsupermercados.close()
+    
+def serializar():
+    pkldescuentos = open("src/tmp/descuentos.pkl", "wb")
+    pklpersonas = open("src/tmp/personas.pkl", "wb")
+    pklproductos = open("src/tmp/productos.pkl", "wb")
+    pklsupermercados = open("src/tmp/supermercados.pkl", "wb")
+    descuentos = Descuento.getDescuentos()
+    personas = Persona.getPersonas()
+    productos = Producto.getListaProductos()
+    supermercados = Supermercado.getSupermercados()
+    pickle.dump(descuentos, pkldescuentos)
+    pickle.dump(personas, pklpersonas)
+    pickle.dump(productos, pklproductos)
+    pickle.dump(supermercados, pklsupermercados)
+    pkldescuentos.close()
+    pklpersonas.close()
+    pklproductos.close()
+    pklsupermercados.close()
 
 
 
 
 #Switch principal
+if __name__ == "__main__":
 
-exit = False
-while not exit:
-    print(barraDeSeparacion)
-    print("=== Menú Principal ===\n")
-    print("1. Nueva orden de compra")
-    print("2. Manejo de Inventario")
-    print("3. Salir")
-    print("")
-    try:
-        opcion = int(input("Seleccione una opción: "))
-    except ValueError:
-        print("Por favor ingrese un número entero.")
-        continue
 
-    if opcion == 1:
-        crearOrden()
-    elif opcion == 2:
-        et = False
-        while not et:
-            print(barraDeSeparacion)
-            print("=== Que desea hacer ===\n")
-            print("1. Descuentos por vencimiento")
-            print("2. Intercambio de productos entre supermercados")
-            print("3. Surtir")
-            print("")
-            try:
-                opcion = int(input("Seleccione una opción: "))
-            except ValueError:
-                print("Por favor ingrese un número entero.")
-                continue
+    sup1 = Supermercado("MercaChicles", 1000000)
+    sup2 = Supermercado("El Gangazo", 12000000)
+    sup3 = Supermercado("Mercatodo", 900000)
+    emp1 = Empleado("Pepe Pineda", 12345, sup1, "Ventas", 2000000)
+    emp2 = Empleado("Pancho Alzate", 65485, sup1, "Asesor", 2500000)
+    emp3 = Empleado("Juanito Alimana", 666999, sup1, "Ventas", 2100000)
+    emp4 = Empleado("Pedro Navaja", 963258, sup2, "Ventas", 2000000)
+    emp5 = Empleado("Betty Lafea", 467852, sup2, "Secretaria", 2400000)
+    emp6 = Empleado("Jose Rodriguez", 643816, sup2, "Asesor", 2450000)
+    emp7 = Empleado("Lucho Diaz", 4736512, sup3, "Ventas", 2010000)
+    emp8 = Empleado("Betty Lafea", 467852, sup3, "Ventas", 1950000)
+    emp9 = Empleado("Willie Colon", 864325, sup3, "Caja", 2005000)
+    cli1 = Cliente("Jaimito Maravilla", 23456)
+    cli2 = Cliente("Pedro Escamoso", 411359)
+    cli3 = Cliente("Lucas Tadeo", 435864)
+    cli4 = Cliente("Alfredo Mercurio", 943567)
+    cli5 = Cliente("Axel Rosas", 73465)
+    bod1 = Bodega("Bodega Principal", "Cordoba", sup1)
+    bod2 = Bodega("Bodega Secundaria", "La Piedra", sup1)
+    bod3 = Bodega("Bodega Terciaria", "El Monte", sup1)
+    bod4 = Bodega("Bodega La Esquinita", "La Esquina", sup2)
+    bod5 = Bodega("Bodega Medieval", "El pasado", sup2)
+    bod6 = Bodega("Bodega El colchon", "La cama", sup3)
+    bod7 = Bodega("Bodega Pollito", "Kokoriko", sup3)
 
-            if opcion == 1:
-                et = True
-            elif opcion == 2:
-                intercambioProductos()
-                et = True
-            elif opcion == 3:
-                #surtir()
-                et = True
-            else:
+    prod1 = Producto("leche Colanta", TipoProducto.ALIMENTO, 3000, 2000)
+    prod2 = Producto("vodka Absoluti", TipoProducto.BEBIDA, 90000, 50000)
+    prod3 = Producto("leche Alqueria", TipoProducto.ALIMENTO, 3100, 2100)
+    prod4 = Producto("detergente Fav", TipoProducto.ASEO, 6500, 5000)
+    prod5 = Producto("jabón Dove", TipoProducto.CUIDADOPERSONAL, 18900, 13450)
+    prod6 = Producto("cuido Dog Chow", TipoProducto.MASCOTA, 125000, 98000)
+    prod7 = Producto("spray Raid", TipoProducto.OTRO, 17000, 15100)
+    prod8 = Producto("cepillo Pro 425", TipoProducto.CUIDADOPERSONAL, 4700, 3000)
+
+    uni1 = Unidad("2024-09-20", prod1, bod1)
+    uni2 = Unidad("2024-08-01", prod1, bod1)
+    uni3 = Unidad("2024-10-05", prod1, bod2)
+    uni4 = Unidad("2024-09-20", prod1, bod1)
+    uni5 = Unidad("2024-08-01", prod2, bod1)
+    uni6 = Unidad("2024-10-05", prod2, bod2)
+    uni7 = Unidad("2024-09-20", prod2, bod1)
+    uni8 = Unidad("2024-08-01", prod3, bod1)
+    uni9 = Unidad("2024-10-05", prod3, bod2)
+
+    uni10 = Unidad("2024-09-30", prod4, bod2)
+    uni11 = Unidad("2024-07-08", prod4, bod1)
+    uni12 = Unidad("2024-11-27", prod4, bod1)
+    uni13 = Unidad("2024-12-08", prod5, bod2)
+    uni14 = Unidad("2024-10-20", prod5, bod1)
+    uni15 = Unidad("2024-09-27", prod6, bod2)
+    uni16 = Unidad("2025-01-30", prod6, bod1)
+
+    descuento_uno = Descuento("Refrescantes y baratas", TipoProducto.BEBIDA, 10)
+    descuento_dos = Descuento("Borrachera económica", prod2, 15)
+
+
+    #deserializar()
+    print(len(Supermercado.getSupermercados()))
+    exit = False
+    while not exit:
+        print(barraDeSeparacion)
+        print("=== Menú Principal ===\n")
+        print("1. Nueva orden de compra")
+        print("2. Manejo de Inventario")
+        print("3. Salir")
+        print("")
+        try:
+            opcion = int(input("Seleccione una opción: "))
+        except ValueError:
+            print("Por favor ingrese un número entero.")
+            continue
+
+        if opcion == 1:
+            crearOrden()
+        elif opcion == 2:
+            et = False
+            while not et:
                 print(barraDeSeparacion)
-                print("- Opción inválida, por favor intente de nuevo.")
-    elif opcion == 3:
-        exit = True
-    else:
-        print("Opción inválida, por favor intente de nuevo.")
+                print("=== Que desea hacer ===\n")
+                print("1. Descuentos por vencimiento")
+                print("2. Intercambio de productos entre supermercados")
+                print("3. Surtir")
+                print("")
+                try:
+                    opcion = int(input("Seleccione una opción: "))
+                except ValueError:
+                    print("Por favor ingrese un número entero.")
+                    continue
+
+                if opcion == 1:
+                    et = True
+                elif opcion == 2:
+                    intercambioProductos()
+                    et = True
+                elif opcion == 3:
+                    #surtir()
+                    et = True
+                else:
+                    print(barraDeSeparacion)
+                    print("- Opción inválida, por favor intente de nuevo.")
+        elif opcion == 3:
+            #serializar()
+            exit = True
+        else:
+            print("Opción inválida, por favor intente de nuevo.")

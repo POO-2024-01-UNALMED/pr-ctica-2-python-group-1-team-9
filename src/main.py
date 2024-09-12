@@ -91,25 +91,3 @@ if __name__ == "__main__":
     descuento_uno = Descuento("Refrescantes y baratas", TipoProducto.BEBIDA, 10)
     descuento_dos = Descuento("Borrachera económica", prod2, 15)
     """
-
-    # Archivos Pikle
-    pkldescuentos = open("src/tmp/descuentos.pkl", "wb")
-    pklpersonas = open("src/tmp/personas.pkl", "wb")
-    pklproductos = open("src/tmp/productos.pkl", "wb")
-    pklsupermercados = open("src/tmp/supermercados.pkl", "wb")
-
-    # Serializacion objetos
-    descuentos = Descuento.getDescuentos()
-    personas = Persona.getPersonas()
-    productos = Producto.getListaProductos()
-    supermercados = Supermercado.getSupermercados()
-    pickle.dump(descuentos, pkldescuentos)
-    pickle.dump(personas, pklpersonas)
-    pickle.dump(productos, pklproductos)
-    pickle.dump(supermercados, pklsupermercados)
-
-    # Cierre archivos
-    pkldescuentos.close()
-    pklpersonas.close()
-    pklproductos.close()
-    pklsupermercados.close()
