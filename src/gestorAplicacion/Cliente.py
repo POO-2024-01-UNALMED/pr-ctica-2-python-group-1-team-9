@@ -2,7 +2,7 @@ from gestorAplicacion.Persona import Persona
 
 class Cliente(Persona):
     def __init__(self, nombre, cedula):
-        super().__init__(nombre, cedula)
+        super().__init__(nombre, cedula, "Cliente")
         self._ordenes = []
         self._puntos = 0
 
