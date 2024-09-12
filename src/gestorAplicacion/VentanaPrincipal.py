@@ -10,6 +10,7 @@ class VentanaPrincipal():
         self.root.title("Ventana Principal de Inicio")
         self.root.geometry("1000x550+284+72")
         self.root.grid_propagate(False) # grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
+        self.root.protocol("WM_DELETE_WINDOW", self.serializarAlCerrarLaVentana)
 
         self.segundaventana = None # Será la ventana de inicio
         self.VentanaInicio = None
@@ -67,7 +68,7 @@ class VentanaPrincipal():
         self.root.config(menu=menuBar)
         menuInicio = tk.Menu(menuBar, tearoff=0)
         menuBar.add_cascade(label="Inicio", menu=menuInicio)
-        menuInicio.add_command(label="Salir de la aplicación", command=self.root.destroy)
+        menuInicio.add_command(label="Salir de la aplicación", command=self.serializarAlCerrarLaVentana)
         menuInicio.add_command(label="Descripción del sistema", command=lambda: self.labelP4.config(image="", font=("Arial"), wraplength=420,
                                 text="'Plataforma Super Usable Para Supermercados'\nle permite administar su inventario, generar ordenenes de compra, hacer registro de clientes, además de realizar seguimiento a los procesos llevados a cabo en la operación del supermercado."))
 
@@ -320,6 +321,11 @@ class VentanaPrincipal():
         self.llamarATodas(None, self.contador)
 
         self.contador = (self.contador + 1) % 4
+    
+    def serializarAlCerrarLaVentana(self):
+        #Acá va el metodo serializar, tener en cuenta las importaciones
+        self.root.destroy()
+        
 
     def crearVentanaInicio(self):
         self.root.withdraw()
