@@ -12,35 +12,35 @@ class Unidad:
         self.bodega = ubicacion
         self.descuentos = []
         self.en_paquete = False
-        tipo.agregar_unidad(self, ubicacion)
-        ubicacion.agregar_producto(self)
+        tipo.agregarUnidad(self, ubicacion)
+        ubicacion.agregarProducto(self)
 
-    def get_codigo(self) -> int:
+    def getCodigo(self) -> int:
         return self.codigo
 
-    def set_codigo(self, codigo: int):
+    def setCodigo(self, codigo: int):
         self.codigo = codigo
 
-    def get_vencimiento(self) -> str:
+    def getVencimiento(self) -> str:
         return self.vencimiento
 
-    def set_vencimiento(self, vencimiento: str):
+    def setVencimiento(self, vencimiento: str):
         self.vencimiento = vencimiento
 
-    def get_tipo(self):
+    def getTipo(self):
         return self.tipo_producto
 
-    def set_tipo(self, tipo):
+    def setTipo(self, tipo):
         self.tipo_producto = tipo
 
-    def get_ubicacion(self):
+    def getUbicacion(self):
         return self.bodega
 
-    def set_ubicacion(self, ubicacion):
+    def setUbicacion(self, ubicacion):
         self.bodega = ubicacion
 
     @staticmethod
-    def generar_fecha_vencimiento() -> str:
+    def generarFechaVencimiento() -> str:
         fecha_actual = datetime.now()
         fecha_maxima = fecha_actual + timedelta(days=60)
         dias = (fecha_maxima - fecha_actual).days
@@ -49,46 +49,46 @@ class Unidad:
         fecha_aleatoria += timedelta(days=30)
         return fecha_aleatoria.strftime('%d-%m-%Y')
 
-    def dias_para_vencimiento(self) -> int:
+    def diasParaVencimiento(self) -> int:
         hoy = datetime.now()
         venc = datetime.strptime(self.vencimiento, '%Y-%m-%d')
         dias = (venc - hoy).days
         return dias
 
-    def calcular_oferta(self):
+    def calcularOferta(self):
         descuento_final = None
         valor_descuento = 0
         if self.descuentos:
             for descuento in self.descuentos:
-                if descuento.get_porcentaje_descuento() > valor_descuento:
-                    valor_descuento = descuento.get_porcentaje_descuento()
+                if descuento.getPorcentajeDescuento() > valor_descuento:
+                    valor_descuento = descuento.getPorcentajeDescuento()
                     descuento_final = descuento
         return descuento_final
 
-    def calcular_precio(self):
-        descuento = self.calcular_oferta()
+    def calcularPrecio(self):
+        descuento = self.calcularOferta()
         if descuento:
-            return self.get_tipo().get_precio() * (100 - descuento.get_porcentaje_descuento()) / 100
+            return self.getTipo().getPrecio() * (100 - descuento.getPorcentajeDescuento()) / 100
         else:
-            return self.get_tipo().get_precio()
+            return self.getTipo().getPrecio()
 
-    def is_oferta(self) -> bool:
+    def isOferta(self) -> bool:
         return len(self.descuentos) > 0
 
-    def get_descuentos(self):
+    def getDescuentos(self):
         return self.descuentos
 
-    def set_descuentos(self, descuentos):
+    def setDescuentos(self, descuentos):
         self.descuentos = descuentos
 
-    def agregar_descuento(self, descuento):
+    def agregarDescuento(self, descuento):
         self.descuentos.append(descuento)
 
-    def eliminar_descuento(self, descuento):
+    def eliminarDescuento(self, descuento):
         self.descuentos.remove(descuento)
 
-    def is_en_paquete(self) -> bool:
+    def isEnPaquete(self) -> bool:
         return self.en_paquete
 
-    def set_en_paquete(self, en_paquete: bool):
+    def setEnPaquete(self, en_paquete: bool):
         self.en_paquete = en_paquete

@@ -1,9 +1,9 @@
-from .Bodega import Bodega
-from .Empleado import Empleado
-from .TipoProducto import TipoProducto
-from .Producto import Producto
-from .Orden import Orden
-from .Unidad import Unidad
+from Bodega import Bodega
+from Empleado import Empleado
+from TipoProducto import TipoProducto
+from Producto import Producto
+from Orden import Orden
+from Unidad import Unidad
 import random
 import datetime
 
@@ -20,100 +20,100 @@ class Supermercado:
         self.paquetes_promocion = []
         Supermercado.supermercados.append(self)
     
-    def get_nombre(self) -> str:
+    def getNombre(self) -> str:
         return self.nombre
 
-    def set_nombre(self, nombre: str):
+    def setNombre(self, nombre: str):
         self.nombre = nombre
 
-    def get_saldo(self) -> float:
+    def getSaldo(self) -> float:
         return self.saldo
 
-    def set_saldo(self, saldo: float):
+    def setSaldo(self, saldo: float):
         self.saldo = saldo
 
-    def actualizar_saldo(self, monto: float):
+    def actualizarSaldo(self, monto: float):
         self.saldo += monto
 
-    def get_empleados(self):
+    def getEmpleados(self):
         return self.empleados
 
-    def set_empleados(self, empleados):
+    def setEmpleados(self, empleados):
         self.empleados = empleados
 
-    def agregar_empleado(self, empleado):
+    def agregarEmpleado(self, empleado):
         self.empleados.append(empleado)
 
-    def quitar_empleado(self, empleado):
+    def quitarEmpleado(self, empleado):
         if empleado in self.empleados:
             self.empleados.remove(empleado)
 
-    def get_bodegas(self):
+    def getBodegas(self):
         return self.bodegas
 
-    def set_bodegas(self, bodegas):
+    def setBodegas(self, bodegas):
         self.bodegas = bodegas
 
-    def agregar_bodega(self, bodega):
+    def agregarBodega(self, bodega):
         self.bodegas.append(bodega)
 
-    def quitar_bodega(self, bodega):
+    def quitarBodega(self, bodega):
         if bodega in self.bodegas:
             self.bodegas.remove(bodega)
 
-    def get_ordenes(self):
+    def getOrdenes(self):
         return self.ordenes
 
-    def set_ordenes(self, ordenes):
+    def setOrdenes(self, ordenes):
         self.ordenes = ordenes
 
-    def agregar_orden(self, orden):
+    def agregarOrden(self, orden):
         self.ordenes.append(orden)
 
-    def quitar_orden(self, orden):
+    def quitarOrden(self, orden):
         if orden in self.ordenes:
             self.ordenes.remove(orden)
 
     @staticmethod
-    def get_supermercados():
+    def getSupermercados():
         return Supermercado.supermercados
 
     @staticmethod
-    def set_supermercados(supermercados):
+    def setSupermercados(supermercados):
         Supermercado.supermercados = supermercados
 
-    def get_productos_promocion(self):
+    def getProductosPromocion(self):
         return self.productos_promocion
 
-    def set_productos_promocion(self, productos_promocion):
+    def setProductosPromocion(self, productos_promocion):
         self.productos_promocion = productos_promocion
 
-    def get_paquetes_promocion(self):
+    def getPaquetesPromocion(self):
         return self.paquetes_promocion
 
-    def set_paquetes_promocion(self, paquetes_promocion):
+    def setPaquetesPromocion(self, paquetes_promocion):
         self.paquetes_promocion = paquetes_promocion
 
-    def agregar_paquete_promocion(self, paquete_promocion):
+    def agregarPaquetePromocion(self, paquete_promocion):
         self.paquetes_promocion.append(paquete_promocion)
 
-    def quitar_paquete_promocion(self, paquete_promocion):
+    def quitarPaquetePromocion(self, paquete_promocion):
         if paquete_promocion in self.paquetes_promocion:
             self.paquetes_promocion.remove(paquete_promocion)
 
-    def productos_por_tipo(self, tipo: 'TipoProducto'):
+    def productosPorTipo(self, tipo: 'TipoProducto'):
         resultado = []
         for bodega in self.bodegas:
-            productos = bodega.get_productos()
+            productos = bodega.getProductos()
             for unidad in productos:
-                if unidad.get_tipo().get_tipo() == tipo:
-                    if unidad.get_tipo() not in resultado:
-                        resultado.append(unidad.get_tipo())
+                if unidad.getTipo().getTipo() == tipo:
+                    if unidad.getTipo() not in resultado:
+                        resultado.append(unidad.getTipo())
         return resultado
 
-    def numero_unidades(self, producto):
-        if self in producto.get_supermercados():
-            indice = producto.get_supermercados().index(self)
-            return producto.get_unidades_supermercado()[indice]
+    def numeroUnidades(self, producto):
+        if self in producto.getSupermercados():
+            indice = producto.getSupermercados().index(self)
+            return producto.getUnidadesSupermercado()[indice]
         return 0
     

@@ -1,4 +1,4 @@
-from .Persona import Persona
+from Persona import Persona
 
 class Cliente(Persona):
     def __init__(self, nombre, cedula):
@@ -9,20 +9,19 @@ class Cliente(Persona):
     def informacion(self):
         return f"{self.nombre} con cédula {self.cedula}"
 
-    def agregar_orden(self, orden):
+    def agregarOrden(self, orden):
         self._ordenes.append(orden)
     
-
-    def get_ordenes(self):
+    def getOrdenes(self):
         return self._ordenes
 
-    def set_ordenes(self, ordenes):
+    def setOrdenes(self, ordenes):
         self._ordenes = ordenes
 
-    def get_puntos(self):
+    def getPuntos(self):
         return self._puntos
 
-    def set_puntos(self, puntos):
+    def setPuntos(self, puntos):
         self._puntos = puntos
 
     def __str__(self):

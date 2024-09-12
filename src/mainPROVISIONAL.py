@@ -5,10 +5,12 @@ from gestorAplicacion.Supermercado import Supermercado
 from gestorAplicacion.Orden import Orden
 from gestorAplicacion.TipoProducto import TipoProducto
 from gestorAplicacion.Producto import Producto
+from gestorAplicacion.Unidad import Unidad
 import Intento_serializar
 
+barraDeSeparacion = "______________________________________________________________________________________________________"
 #creamos listas para serializar los elementos 
-Lista_supermercados= Supermercado.get_supermercados
+Lista_supermercados= Supermercado.getSupermercados
 
 
 #Funcionalidades
@@ -17,30 +19,30 @@ Lista_supermercados= Supermercado.get_supermercados
 supermercado1 = Supermercado(nombre="Supermercado Central", saldo=5000.0)
 clientes = [Cliente(nombre="Julian", cedula="1"), Cliente("Julio", "2")]
 empleado1 = [Empleado(nombre="Guzman", cedula="2", supermercado=supermercado1, cargo="Empleado", salario="100"), Empleado(nombre="David", cedula="22", supermercado=supermercado1, cargo="Empleado", salario="100")]
-supermercado1.agregar_empleado(empleado1)
+supermercado1.agregarEmpleado(empleado1)
 
 def crearOrden():
-    supermercados = Supermercado.get_supermercados()
-    personas = Persona.get_personas()
-    clientes = [persona for persona in personas if persona.get_cargo() == "Cliente"]
+    supermercados = Supermercado.getSupermercados()
+    personas = Persona.getPersonas()
+    clientes = [persona for persona in personas if persona.getCargo() == "Cliente"]
 
     while True:
         print("\n=== Lista de Supermercados ===")
         for i, sup in enumerate(supermercados, 1):
-            print(f"{i}. {sup.get_nombre()}")
+            print(f"{i}. {sup.getNombre()}")
 
         try:
             opcion = int(input("Seleccione un supermercado: "))
             if 1 <= opcion <= len(supermercados):
                 supermercado = supermercados[opcion - 1]
-                print(f"\n- Supermercado {supermercado.get_nombre()} seleccionado.")
+                print(f"\n- Supermercado {supermercado.getNombre()} seleccionado.")
                 break
             else:
                 print("- Opción inválida, por favor intente de nuevo.")
         except ValueError:
             print("- Opción inválida, por favor intente de nuevo.")
 
-    empleados = supermercado.get_empleados()
+    empleados = supermercado.getEmpleados()
 
     while True:
         print("\n=== Lista de Empleados ===")
@@ -53,7 +55,7 @@ def crearOrden():
             opcion = int(input("Seleccione empleado encargado: "))
             if 1 <= opcion <= len(empleados):
                 empleado = empleados[opcion - 1]
-                print(f"\n- {empleado.get_cargo()} {empleado.get_nombre()} seleccionado.")
+                print(f"\n- {empleado.getCargo()} {empleado.getNombre()} seleccionado.")
                 break
             else:
                 print("- Opción inválida, por favor intente de nuevo.")
@@ -72,7 +74,7 @@ def crearOrden():
                     opcion = int(input("Seleccione el cliente: "))
                     if 1 <= opcion <= len(clientes):
                         cliente = clientes[opcion - 1]
-                        print(f"\n- {cliente.get_cargo()} {cliente.get_nombre()} con cédula {cliente.get_cedula()} seleccionado.")
+                        print(f"\n- {cliente.getCargo()} {cliente.getNombre()} con cédula {cliente.getCedula()} seleccionado.")
                         break
                     else:
                         print("- Opción inválida, por favor intente de nuevo.")
@@ -102,21 +104,21 @@ def crearOrden():
             opcion = int(input("Seleccione una opción: "))
 
             if opcion == 1:
-                print("agregar_producto")
-                agregar_producto(orden)
+                print("agregarProducto")
+                agregarProducto(orden)
             elif opcion == 2:
                 print("quitar_producto")
-                quitar_producto(orden)
+                quitarProducto(orden)
             elif opcion == 3:
                 print("mostrar_orden")
-                mostrar_orden(orden)
+                mostrarOrden(orden)
             elif opcion == 4:
-                    if len(orden.get_productos()) != 0:
-                        orden.completar_orden()
-                        print("______________________________________________________________________________________________________")
+                    if len(orden.getProductos()) != 0:
+                        orden.completarOrden()
+                        print(barraDeSeparacion)
                         print("---Orden Completa---")
                     else:
-                        print("______________________________________________________________________________________________________")
+                        print(barraDeSeparacion)
                         print("---La Orden no contiene productos---")
                         print("---Orden Cancelada---")
                     exit = True
@@ -131,12 +133,12 @@ def crearOrden():
             print("- Opción inválida, por favor intente de nuevo.")
     pass
 
-def agregar_producto(orden):
+def agregarProducto(orden):
     tipo = None
     exit = False
 
     while not exit:
-        print("______________________________________________________________________________________________________")
+        print(barraDeSeparacion)
         print("=== Seleccione el tipo de producto a buscar ===\n")
         print("1. Aseo")
         print("2. Alimento")
@@ -168,22 +170,22 @@ def agregar_producto(orden):
                 tipo = TipoProducto.OTRO
                 exit = True
             else:
-                print("______________________________________________________________________________________________________")
+                print(barraDeSeparacion)
                 print("- Opción inválida, por favor intente de nuevo.")
         except ValueError:
-            print("______________________________________________________________________________________________________")
+            print(barraDeSeparacion)
             print("- Opción inválida, por favor intente de nuevo.")
 
-    lista1 = orden.get_supermercado().productos_por_tipo(tipo)
+    lista1 = orden.getSupermercado().productosPorTipo(tipo)
     
     if len(lista1) == 0:
-        print("______________________________________________________________________________________________________")
+        print(barraDeSeparacion)
         print("No hay productos disponibles del tipo seleccionado.")
     else:
-        print("______________________________________________________________________________________________________")
+        print(barraDeSeparacion)
         print("=== Productos disponibles ===\n")
         for i, producto in enumerate(lista1, start=1):
-            print(f"{i}. {producto.get_nombre()}")
+            print(f"{i}. {producto.getNombre()}")
 
         opcionstr = input("\nDesea agregar algún producto al carrito? (s/n): ").lower()
         while opcionstr not in ["s", "n"]:
@@ -203,25 +205,25 @@ def agregar_producto(orden):
             unienof = []
             unisinof = []
 
-            for unidad in lista1[opcionproducto - 1].get_unidades(orden.get_supermercado()):
-                if unidad.is_oferta():
+            for unidad in lista1[opcionproducto - 1].getUnidades(orden.getSupermercado()):
+                if unidad.isOferta():
                     unienof.append(unidad)
                 else:
                     unisinof.append(unidad)
 
-            print("______________________________________________________________________________________________________")
+            print(barraDeSeparacion)
             print("=== Unidades disponibles=== \n")
             i = 0
             if unisinof:
                 i += 1
-                print(f"{i}. Sin oferta - ${lista1[opcionproducto - 1].get_precio()} cantidad disponible: {len(unisinof)}")
+                print(f"{i}. Sin oferta - ${lista1[opcionproducto - 1].getPrecio()} cantidad disponible: {len(unisinof)}")
             for unidad in unienof:
                 i += 1
-                print(f"{i}. {unidad.calcular_oferta().get_nombre()}({unidad.calcular_oferta().get_porcentaje_descuento()}%) ${unidad.calcular_precio()}")
+                print(f"{i}. {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
 
             opcionstr2 = input("Desea agregar alguna unidad? (s/n): ").lower()
             while opcionstr2 not in ["s", "n"]:
-                print("______________________________________________________________________________________________________")
+                print(barraDeSeparacion)
                 print("- Opción inválida, por favor intente de nuevo.")
                 opcionstr2 = input("Desea agregar alguna unidad? (s/n): ").lower()
 
@@ -241,7 +243,7 @@ def agregar_producto(orden):
                         try:
                             cantidad = int(input("Ingrese el número de unidades a agregar: "))
                             if 0 <= cantidad <= len(unisinof):
-                                orden.agregar_producto(orden.get_supermercado(), lista1[opcionproducto - 1], cantidad)
+                                orden.agregarProducto(orden.getSupermercado(), lista1[opcionproducto - 1], cantidad)
                                 print("Producto(s) agregado(s) a la orden.")
                                 break
                             else:
@@ -249,20 +251,20 @@ def agregar_producto(orden):
                         except ValueError:
                             print("- Opción inválida, por favor intente de nuevo.")
                 else:
-                    orden.agregar_unidad(unienof[opcion - 2 if unisinof else opcion - 1])
+                    orden.agregarUnidad(unienof[opcion - 2 if unisinof else opcion - 1])
                     print("Producto agregado a la orden.")
 
-def quitar_producto(orden):
+def quitarProducto(orden):
     exit = False
     while not exit:
-        unidades = orden.get_productos()
-        print("______________________________________________________________________________________________________")
+        unidades = orden.getProductos()
+        print(barraDeSeparacion)
         print("=== Producto(s) actualmente en la orden ===\n")
         for i, unidad in enumerate(unidades, start=1):
-            if unidad.is_oferta():
-                print(f"{i}. {unidad.get_tipo().get_nombre()} {unidad.calcular_oferta().get_nombre()}({unidad.calcular_oferta().get_porcentaje_descuento()}%) ${unidad.calcular_precio()}")
+            if unidad.isOferta():
+                print(f"{i}. {unidad.getTipo().getNombre()} {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
             else:
-                print(f"{i}. {unidad.get_tipo().get_nombre()} ${unidad.calcular_precio()}")
+                print(f"{i}. {unidad.getTipo().getNombre()} ${unidad.calcularPrecio()}")
 
         i += 1
         print(f"{i}. Cancelar")
@@ -270,27 +272,27 @@ def quitar_producto(orden):
         try:
             opcion = int(input("Seleccione un producto para remover: "))
             if 1 <= opcion <= len(unidades):
-                orden.quitar_unidad(unidades[opcion - 1])
+                orden.quitarUnidad(unidades[opcion - 1])
                 print("El producto se removió con éxito.")
             elif opcion == i:
                 exit = True
         except ValueError:
             print("Opción inválida, por favor intente de nuevo.")
 
-def mostrar_orden(orden):
-    print("______________________________________________________________________________________________________")
-    print(f"Orden id: {orden.get_id()}")
-    print(f"Supermercado: {orden.get_supermercado().get_nombre()}")
-    print(f"Empleado: {orden.get_empleado().get_nombre()}")
-    print(f"Cliente: {orden.get_cliente().get_nombre()}")
+def mostrarOrden(orden):
+    print(barraDeSeparacion)
+    print(f"Orden id: {orden.getId()}")
+    print(f"Supermercado: {orden.getSupermercado().getNombre()}")
+    print(f"Empleado: {orden.getEmpleado().getNombre()}")
+    print(f"Cliente: {orden.getCliente().getNombre()}")
     print("\nProductos en la orden:")
-    for i, unidad in enumerate(orden.get_productos(), start=1):
-        if unidad.is_oferta():
-            print(f"{i}. {unidad.get_tipo().get_nombre()} {unidad.calcular_oferta().get_nombre()}({unidad.calcular_oferta().get_porcentaje_descuento()}%) ${unidad.calcular_precio()}")
+    for i, unidad in enumerate(orden.getProductos(), start=1):
+        if unidad.isOferta():
+            print(f"{i}. {unidad.getTipo().getNombre()} {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
         else:
-            print(f"{i}. {unidad.get_tipo().get_nombre()} ${unidad.calcular_precio()}")
-    print(f"\nPrecio total: ${orden.calcular_precio_total()}")
-    print("______________________________________________________________________________________________________")
+            print(f"{i}. {unidad.getTipo().getNombre()} ${unidad.calcularPrecio()}")
+    print(f"\nPrecio total: ${orden.calcularPrecioTotal()}")
+    print(barraDeSeparacion)
 
 #F2
 def administarInventario():
@@ -304,65 +306,65 @@ def intercambioProductos():
     sci = input  # Para capturar entradas del usuario
     scni = input  # Se usará para las opciones
 
-    for supermercado in Supermercado.get_supermercados():
+    for supermercado in Supermercado.getSupermercados():
         supermercados.append(supermercado)
 
     supermercado1 = None
     supermercado2 = None
 
     while True:
-        print("______________________________________________________________________________________________________")
+        print(barraDeSeparacion)
         print("=== Lista de Supermercados ===\n")
         for i, sup in enumerate(supermercados, 1):
-            print(f"{i}. {sup.get_nombre()}")
+            print(f"{i}. {sup.getNombre()}")
         
         print("")
         opcion = int(input("Seleccione el primer supermercado: "))
         
         # Validación de la opción
         while opcion < 1 or opcion > len(supermercados):
-            print("______________________________________________________________________________________________________")
+            print(barraDeSeparacion)
             print("- Opción inválida, por favor intente de nuevo.")
             for i, sup in enumerate(supermercados, 1):
-                print(f"{i}. {sup.get_nombre()}")
+                print(f"{i}. {sup.getNombre()}")
             print("")
             opcion = int(input("Seleccione el primer supermercado: "))
 
         supermercado1 = supermercados.pop(opcion - 1)
-        print(f"______________________________________________________________________________________________________\n- Supermercado {supermercado1.get_nombre()} seleccionado.")
+        print(f"{barraDeSeparacion}\n- Supermercado {supermercado1.getNombre()} seleccionado.")
         break
 
     while True:
-        print("______________________________________________________________________________________________________")
+        print(barraDeSeparacion)
         print("=== Lista de Supermercados ===\n")
         for i, sup in enumerate(supermercados, 1):
-            print(f"{i}. {sup.get_nombre()}")
+            print(f"{i}. {sup.getNombre()}")
         
         print("")
         opcion = int(input("Seleccione el segundo supermercado: "))
         
         # Validación de la opción
         while opcion < 1 or opcion > len(supermercados):
-            print("______________________________________________________________________________________________________")
+            print(barraDeSeparacion)
             print("- Opción inválida, por favor intente de nuevo.")
             for i, sup in enumerate(supermercados, 1):
-                print(f"{i}. {sup.get_nombre()}")
+                print(f"{i}. {sup.getNombre()}")
             print("")
             opcion = int(input("Seleccione el segundo supermercado: "))
 
         supermercado2 = supermercados.pop(opcion - 1)
-        print(f"______________________________________________________________________________________________________\n- Supermercado {supermercado2.get_nombre()} seleccionado.")
+        print(f"{barraDeSeparacion}\n- Supermercado {supermercado2.getNombre()} seleccionado.")
         break
 
     # Mostrar productos en cada supermercado
-    for prod in Producto.get_lista_productos():
-        i = sum(1 for bodega in supermercado1.get_bodegas() for unidad in bodega.get_productos() if unidad.get_tipo().get_nombre() == prod.get_nombre())
-        print(f"______________________________________________________________________________________________________\nEn {supermercado1.get_nombre()} había(n) inicialmente {supermercado1.numero_unidades(prod)} unidades de {prod.get_nombre()}")
+    for prod in Producto.getListaProductos():
+        i = sum(1 for bodega in supermercado1.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == prod.getNombre())
+        print(f"{barraDeSeparacion}\nEn {supermercado1.getNombre()} había(n) inicialmente {supermercado1.numeroUnidades(prod)} unidades de {prod.getNombre()}")
         print(f"Actualmente hay {i} unidades")
 
-    for producto in Producto.get_lista_productos():
-        i = sum(1 for bodega in supermercado2.get_bodegas() for unidad in bodega.get_productos() if unidad.get_tipo().get_nombre() == producto.get_nombre())
-        print(f"______________________________________________________________________________________________________\nEn {supermercado2.get_nombre()} había(n) inicialmente {supermercado2.numero_unidades(producto)} unidades de {producto.get_nombre()}")
+    for producto in Producto.getListaProductos():
+        i = sum(1 for bodega in supermercado2.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == producto.getNombre())
+        print(f"{barraDeSeparacion}\nEn {supermercado2.getNombre()} había(n) inicialmente {supermercado2.numeroUnidades(producto)} unidades de {producto.getNombre()}")
         print(f"Actualmente hay {i} unidades")
 
     # Confirmar intercambio de productos
@@ -373,7 +375,7 @@ def intercambioProductos():
     if select == 's':
         envia, recibe = None, None
         while True:
-            print(f"______________________________________________________________________________________________________\n=== Supermercado que enviará los productos ===\n1. {supermercado1.get_nombre()}\n2. {supermercado2.get_nombre()}\n")
+            print(f"{barraDeSeparacion}\n=== Supermercado que enviará los productos ===\n1. {supermercado1.getNombre()}\n2. {supermercado2.getNombre()}\n")
             opcion = int(input("Seleccione una opción: "))
             if opcion == 1:
                 envia = supermercado1
@@ -384,48 +386,48 @@ def intercambioProductos():
                 recibe = supermercado1
                 break
             else:
-                print("______________________________________________________________________________________________________\n- Opción inválida, por favor intente de nuevo.")
+                print("{barraDeSeparacion}\n- Opción inválida, por favor intente de nuevo.")
         
         # Intercambio de productos
-        productosenv = [unidad.get_tipo() for bodega in envia.get_bodegas() for unidad in bodega.get_productos() if unidad.get_tipo() not in productosenv]
+        productosenv = [unidad.getTipo() for bodega in envia.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo() not in productosenv]
 
-        print("______________________________________________________________________________________________________\n=== Productos disponibles para enviar ===\n")
+        print("{barraDeSeparacion}\n=== Productos disponibles para enviar ===\n")
         for i, p in enumerate(productosenv, 1):
-            print(f"{i}. {p.get_nombre()}")
+            print(f"{i}. {p.getNombre()}")
 
         opcion = int(input("\nSeleccione una opción: "))
         seleccionado = productosenv[opcion - 1]
 
-        unidades = [unidad for bodega in envia.get_bodegas() for unidad in bodega.get_productos() if unidad.get_tipo() == seleccionado]
+        unidades = [unidad for bodega in envia.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo() == seleccionado]
 
-        print("______________________________________________________________________________________________________\n=== Unidades disponibles para enviar ===\n")
+        print("{barraDeSeparacion}\n=== Unidades disponibles para enviar ===\n")
         for i, unidad in enumerate(unidades, 1):
-            if not unidad.is_oferta():
-                print(f"{i}. {unidad.get_tipo().get_nombre()} Sin oferta")
+            if not unidad.isOferta():
+                print(f"{i}. {unidad.getTipo().getNombre()} Sin oferta")
             else:
-                oferta = unidad.calcular_oferta()
-                print(f"{i}. {unidad.get_tipo().get_nombre()} {oferta.get_nombre()}({oferta.get_porcentaje_descuento()}%)")
+                oferta = unidad.calcularOferta()
+                print(f"{i}. {unidad.getTipo().getNombre()} {oferta.getNombre()}({oferta.getPorcentajeDescuento()}%)")
         
         opcion = int(input("\nSeleccione una opción: "))
         unienv = unidades[opcion - 1]
 
-        print(f"______________________________________________________________________________________________________\n{unienv.get_tipo().get_nombre()} con código {unienv.get_codigo()} enviado de {unienv.get_ubicacion().get_nombre()} a {recibe.get_nombre()}")
-        recibe.get_bodegas()[0].agregar_producto(unienv)
-        unienv.get_ubicacion().quitar_producto(unienv)
-        unienv.set_ubicacion(recibe.get_bodegas()[0])
+        print(f"{barraDeSeparacion}\n{unienv.getTipo().getNombre()} con código {unienv.getCodigo()} enviado de {unienv.getUbicacion().getNombre()} a {recibe.getNombre()}")
+        recibe.getBodegas()[0].agregarProducto(unienv)
+        unienv.getUbicacion().quitarProducto(unienv)
+        unienv.setUbicacion(recibe.getBodegas()[0])
 
 
-def verificar_vencimiento(supermercado, dias=0):
-    for bodega in supermercado.get_bodegas():
-        for unidad in bodega.get_productos():
-            dias_para_vencimiento = unidad.dias_para_vencimiento()
+def verificarVencimiento(supermercado, dias=0):
+    for bodega in supermercado.getBodegas():
+        for unidad in bodega.getProductos():
+            dias_para_vencimiento = unidad.diasParaVencimiento()
             if dias_para_vencimiento <= dias:
                 if dias_para_vencimiento > 0:
-                    print(f"Al producto {unidad.get_tipo().get_nombre()} con código {unidad.get_codigo()}, ubicado en {bodega.get_nombre()} le quedan {dias_para_vencimiento} días para vencer.")
+                    print(f"Al producto {unidad.getTipo().getNombre()} con código {unidad.getCodigo()}, ubicado en {bodega.getNombre()} le quedan {dias_para_vencimiento} días para vencer.")
                 elif dias_para_vencimiento == 0:
-                    print(f"El producto {unidad.get_tipo().get_nombre()} con código {unidad.get_codigo()}, ubicado en {bodega.get_nombre()} se vence hoy.")
+                    print(f"El producto {unidad.getTipo().getNombre()} con código {unidad.getCodigo()}, ubicado en {bodega.getNombre()} se vence hoy.")
                 else:
-                    print(f"El producto {unidad.get_tipo().get_nombre()} con código {unidad.get_codigo()}, ubicado en {bodega.get_nombre()} se venció hace {-dias_para_vencimiento} días.")
+                    print(f"El producto {unidad.getTipo().getNombre()} con código {unidad.getCodigo()}, ubicado en {bodega.getNombre()} se venció hace {-dias_para_vencimiento} días.")
 
 
 
@@ -440,7 +442,7 @@ def verificar_vencimiento(supermercado, dias=0):
 
 exit = False
 while not exit:
-    print("______________________________________________________________________________________________________")
+    print(barraDeSeparacion)
     print("=== Menú Principal ===\n")
     print("1. Nueva orden de compra")
     print("2. Manejo de Inventario")
@@ -457,7 +459,7 @@ while not exit:
     elif opcion == 2:
         et = False
         while not et:
-            print("______________________________________________________________________________________________________")
+            print(barraDeSeparacion)
             print("=== Que desea hacer ===\n")
             print("1. Descuentos por vencimiento")
             print("2. Intercambio de productos entre supermercados")
@@ -478,7 +480,7 @@ while not exit:
                 #surtir()
                 et = True
             else:
-                print("______________________________________________________________________________________________________")
+                print(barraDeSeparacion)
                 print("- Opción inválida, por favor intente de nuevo.")
     elif opcion == 3:
         exit = True

@@ -1,6 +1,6 @@
-import Producto
-import TipoProducto
-import Unidad
+from Producto import Producto
+from TipoProducto import TipoProducto
+from Unidad import Unidad
 
 class Descuento:
     _descuentos = []
@@ -15,83 +15,72 @@ class Descuento:
 
         if isinstance(tipo_o_producto_o_unidad, TipoProducto):
             self._tipo_en_promocion = tipo_o_producto_o_unidad
-            self.calcular_descuento(1)
+            self.calcularDescuento(1)
         elif isinstance(tipo_o_producto_o_unidad, Producto):
             self._producto_en_promocion = tipo_o_producto_o_unidad
-            self.calcular_descuento(2)
+            self.calcularDescuento(2)
         elif isinstance(tipo_o_producto_o_unidad, Unidad):
             self._unidad_en_promocion = tipo_o_producto_o_unidad
-            self.calcular_descuento(3)
+            self.calcularDescuento(3)
 
         Descuento._descuentos.append(self)
 
-    def calcular_descuento(self, i):
+    def calcularDescuento(self, i):
         if i == 1:
-            for producto in Producto.get_lista_productos():
-                if producto.get_tipo() == self._tipo_en_promocion:
-                    for unidad in producto.get_unidades():
-                        unidad.agregar_descuento(self)
+            for producto in Producto.getListaProductos():
+                if producto.getTipo() == self._tipo_en_promocion:
+                    for unidad in producto.getUnidades():
+                        unidad.agregarDescuento(self)
         elif i == 2:
             if self._producto_en_promocion is not None:
-                for unidad in self._producto_en_promocion.get_unidades():
-                    unidad.agregar_descuento(self)
+                for unidad in self._producto_en_promocion.getUnidades():
+                    unidad.agregarDescuento(self)
         elif i == 3:
             if self._unidad_en_promocion is not None:
-                self._unidad_en_promocion.agregar_descuento(self)
+                self._unidad_en_promocion.agregarDescuento(self)
 
     # Getters y Setters
-    @property
-    def nombre(self):
+    
+    def getNombre(self):
         return self._nombre
 
-    @nombre.setter
-    def nombre(self, nombre):
+    def setNombre(self, nombre):
         self._nombre = nombre
 
-    @property
-    def tipo_en_promocion(self):
+    def getTipoEnPromocion(self):
         return self._tipo_en_promocion
 
-    @tipo_en_promocion.setter
-    def tipo_en_promocion(self, tipo_en_promocion):
+    def setTipoEnPromocion(self, tipo_en_promocion):
         self._tipo_en_promocion = tipo_en_promocion
 
-    @property
-    def producto_en_promocion(self):
+    def getProductoEnPromocion(self):
         return self._producto_en_promocion
 
-    @producto_en_promocion.setter
-    def producto_en_promocion(self, producto_en_promocion):
+    def setProductoEnPromocion(self, producto_en_promocion):
         self._producto_en_promocion = producto_en_promocion
 
-    @property
-    def unidad_en_promocion(self):
+    def getUnidadEnPromocion(self):
         return self._unidad_en_promocion
 
-    @unidad_en_promocion.setter
-    def unidad_en_promocion(self, unidad_en_promocion):
+    def setUnidadEnPromocion(self, unidad_en_promocion):
         self._unidad_en_promocion = unidad_en_promocion
 
-    @property
-    def is_activo(self):
+    def isActivo(self):
         return self._is_activo
 
-    @is_activo.setter
-    def is_activo(self, is_activo):
+    def setIsActivo(self, is_activo):
         self._is_activo = is_activo
 
-    @property
-    def porcentaje_descuento(self):
+    def getPorcentajeDescuento(self):
         return self._porcentaje_descuento
 
-    @porcentaje_descuento.setter
-    def porcentaje_descuento(self, porcentaje_descuento):
+    def setPorcentajeDescuento(self, porcentaje_descuento):
         self._porcentaje_descuento = porcentaje_descuento
 
     @staticmethod
-    def get_descuentos():
+    def getDescuentos():
         return Descuento._descuentos
 
     @staticmethod
-    def set_descuentos(descuentos):
+    def setDescuentos(descuentos):
         Descuento._descuentos = descuentos

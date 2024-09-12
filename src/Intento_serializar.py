@@ -6,10 +6,10 @@ from gestorAplicacion.Persona import Persona
 
 class Serializable:
     def __init__(self):
-        self.lista_de_objetos_Supermercado = Supermercado.get_supermercados() 
-        self.lista_de_objetos_Producto = Producto.get_lista_productos()  
-        self.lista_de_objetos_Descuento = Descuento.get_descuentos() 
-        self.lista_de_objetos_Persona = Persona.get_personas()  
+        self.lista_de_objetos_Supermercado = Supermercado.getSupermercados() 
+        self.lista_de_objetos_Producto = Producto.getListaProductos()  
+        self.lista_de_objetos_Descuento = Descuento.getDescuentos() 
+        self.lista_de_objetos_Persona = Persona.getPersonas()  
 
         self.lista_de_objetos = [
             self.lista_de_objetos_Supermercado,
