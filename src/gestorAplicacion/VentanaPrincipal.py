@@ -69,7 +69,7 @@ class VentanaPrincipal():
         menuBar.add_cascade(label="Inicio", menu=menuInicio)
         menuInicio.add_command(label="Salir de la aplicación", command=self.root.destroy)
         menuInicio.add_command(label="Descripción del sistema", command=lambda: self.labelP4.config(image="", font=("Arial"), wraplength=420,
-                                text="'Programa Super Usable Para Supermercados'\nle permite administar su inventario, generar ordenenes de compra, hacer registro de clientes, además de realizar seguimiento a los procesos llevados a cabo en la operación del supermercado."))
+                                text="'Plataforma Super Usable Para Supermercados'\nle permite administar su inventario, generar ordenenes de compra, hacer registro de clientes, además de realizar seguimiento a los procesos llevados a cabo en la operación del supermercado."))
 
     def inicializarRutasFotos(self): # Funcion para crear todas las rutas a las fotos que van en el frameP6
         self.rutasFotos = [

@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+from tkinter import messagebox
 from PIL import Image, ImageTk
 
 class VentanaInicio:
@@ -18,7 +19,7 @@ class VentanaInicio:
 
         menuArchivo = tk.Menu(menuBar, tearoff=0)
         menuBar.add_cascade(label="Archivo", menu=menuArchivo) 
-        menuArchivo.add_command(label="Aplicación (sin implementar)")
+        menuArchivo.add_command(label="Aplicación", command= self.ventanaDeDialogoInfoBasica)
         menuArchivo.add_command(label="Salir", command= self.regresarVentanaPrincipal)
 
         menuProcesosYConsultas = tk.Menu(menuBar,tearoff=0)
@@ -29,13 +30,17 @@ class VentanaInicio:
 
         menuAyuda = tk.Menu(menuBar,tearoff=0)
         menuBar.add_cascade(label="Ayuda", menu=menuAyuda)
-        menuAyuda.add_command(label="Acerda de: (sin implementar)")
+        menuAyuda.add_command(label="Acerda de:", command=self.ventanaDeDialogoAcercaDe)
 
     def regresarVentanaPrincipal(self): # Oculta la segunda ventana ("Plataforma Super Usable Para Supermercados (PSUPS)") y muestra la primera ("Ventana principal de inicio")
         self.root2.root.deiconify()
         self.root.withdraw()
+    
+    def ventanaDeDialogoInfoBasica(self):
+        messagebox.showinfo("Aplicación", "Con esta aplicación podrá hacer ordenes de venta, administar inventarios y relizar movimientos de mercancia entre supermercados.")
 
-
+    def ventanaDeDialogoAcercaDe(self):
+        messagebox.showinfo("Acerca de:", "PSUPS fue desarrollado por:\n - Jose Manuel Areiza @areizaaz\n - Oscar Daniel Ruiz @OscarDanielRuiz\n - Julián David Martinez @JulianMart2706\n - Simón Steban Posada @Sayposada")
 '''Menú superior (Zona 1 de la interfaz) Su estructura ser ́a la siguiente:
     • Archivo
         - Aplicacion: Se despliega una ventana de di ́alogo con la informaci ́on b ́asica de lo que hace la aplicaci ́on.
