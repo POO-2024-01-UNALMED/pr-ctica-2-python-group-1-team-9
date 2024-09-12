@@ -54,7 +54,7 @@ class VentanaPrincipal():
 
         self.inicializarRutasFotos() # Se inicializa la lista que contiene las rutas a las fotos
 
-        # Creación de la interfaz
+        # Creación de la interfaza
         self.crearMenu()
         self.crearFrames()
         self.configurarGrid()
@@ -68,7 +68,8 @@ class VentanaPrincipal():
         menuInicio = tk.Menu(menuBar, tearoff=0)
         menuBar.add_cascade(label="Inicio", menu=menuInicio)
         menuInicio.add_command(label="Salir de la aplicación", command=self.root.destroy)
-        menuInicio.add_command(label="Descripción del sistema", command=lambda: self.labelP4.config(image="", text="Esta es la descripción del sistema"))
+        menuInicio.add_command(label="Descripción del sistema", command=lambda: self.labelP4.config(image="", font=("Arial"), wraplength=420,
+                                text="'Programa Super Usable Para Supermercados'\nle permite administar su inventario, generar ordenenes de compra, hacer registro de clientes, además de realizar seguimiento a los procesos llevados a cabo en la operación del supermercado."))
 
     def inicializarRutasFotos(self): # Funcion para crear todas las rutas a las fotos que van en el frameP6
         self.rutasFotos = [
@@ -113,8 +114,8 @@ class VentanaPrincipal():
         self.frameP3.grid(row=0, column=0, padx=7, pady=(7,5), sticky="nsew")
         self.frameP3.pack_propagate(False)
         
-        self.labelP3 = tk.Label(self.frameP3, bg="white", text="Mensaje de bienvenida al sistema :)", 
-                                font=("Arial"), wraplength=400, anchor="center", border=5)
+        self.labelP3 = tk.Label(self.frameP3, bg="white", text="Bienvenido a PSUPS, con nuestro sistema, administar su supermercado,\n¡Nunca fue tan facil!", 
+                                font=("Arial"), wraplength=420, anchor="center", border=5)
         self.labelP3.pack(expand=True, fill="both")
 
         # Frame p4 el que va dentro de p1 en la parte inferior
@@ -128,7 +129,7 @@ class VentanaPrincipal():
         self.frameP4.grid_rowconfigure(1, weight=0)
 
         # Label para la foto que cambia al pasar el mouse por encima (este label va dentro de p4 en la parte superior)
-        self.labelP4 = tk.Label(self.frameP4, bg="blue")
+        self.labelP4 = tk.Label(self.frameP4, bg="white")
         self.labelP4.grid(row=0, column=0, sticky="nsew")
         self.labelP4.bind("<Leave>", self.cambiarP4) # Evento para el cambio de la foto
         self.cambiarP4(self.contador2) # Se llama a esta funcio para que aparezca una imagen en labelP4 de una vez se inicia el programa
@@ -145,7 +146,7 @@ class VentanaPrincipal():
         self.frameP5.pack_propagate(False)
 
         # Boton p5 es el que está dentro de p5 y se encarga de cambiar las hojas de vida y las fotos de p6
-        self.botonP5 = tk.Button(self.frameP5, text="Hojas de vida de los desarrolladores", wraplength=400  ,
+        self.botonP5 = tk.Button(self.frameP5, text="Hojas de vida de los desarrolladores", wraplength=420  ,
                                  font=("Arial"), bg="gray90", command=self.cambioHojaDeVida)
         self.botonP5.pack(expand=True, fill="both")
 
