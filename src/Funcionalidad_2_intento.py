@@ -2,6 +2,51 @@ import random
 from datetime import datetime, timedelta
 from gestorAplicacion import Supermercado, Empleado, Persona
 
+class Persona:
+    def __init__(self, nombre, cedula):
+        self.nombre = nombre
+        self.cedula = cedula
+
+class Cliente(Persona):
+    def __init__(self, nombre, cedula):
+        super().__init__(nombre, cedula)
+        self.ordenes = []
+        self.puntos = 0
+
+    def informacion(self):
+        return f"{self.nombre} con cédula {self.cedula}"
+
+    def agregar_orden(self, orden):
+        self.ordenes.append(orden)
+
+    def get_ordenes(self):
+        return self.ordenes
+
+    def set_ordenes(self, ordenes):
+        self.ordenes = ordenes
+
+    def get_puntos(self):
+        return self.puntos
+
+    def set_puntos(self, puntos):
+        self.puntos = puntos
+
+    def __str__(self):
+        return f"Cliente con nombre {self.nombre} y cédula {self.cedula}"
+    
+def crear_cliente():
+  nombre = input("Ingrese su nombre: ")
+    
+  while True:
+    try:
+            cedula = int(input("Ingrese su cédula: "))
+            break
+    except ValueError:
+            print("Error: Ingrese un número válido para la cédula.")
+    
+    cliente = Cliente(nombre, cedula)
+    
+
 class Empleado:
        def __init__(self, nombre, cedula, supermercado, cargo, salario):
         super().__init__(nombre, cedula, cargo)
@@ -12,6 +57,7 @@ class Empleado:
         self.id = Empleado.actual_id
         supermercado.agregar_empleado(self)
         Empleado.empleados.append(self)
+
 def crear_empleado():
     # Pedir los datos al usuario
     nombre = input("Ingrese el nombre del empleado: ")
@@ -138,8 +184,10 @@ def administarrInventario(Supermercado):
         respuesta= input("¿Desea crear otro empleado?")
 
       print(f"luego de añadir el supermercado {Añadir_supermercado} y a los empleados" + ''.join(lista_de_empleados) + "\n debemos añadirte como -cliente-")
+      nuevo_cliente= crear_cliente
+      print(nuevo_cliente)
 
-      
+
 
 
 
