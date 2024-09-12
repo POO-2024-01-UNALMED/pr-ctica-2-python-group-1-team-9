@@ -135,9 +135,13 @@ def administarrInventario(Supermercado):
       while respuesta == "Si" or "SI" or "si" or "sí" or "Si" or "Sí":
         nuevo_empleado= crear_empleado()
         lista_de_empleados.append(nuevo_empleado)
-
         respuesta= input("¿Desea crear otro empleado?")
-        
+
+      print(f"luego de añadir el supermercado {Añadir_supermercado} y a los empleados" + ''.join(lista_de_empleados) + "\n debemos añadirte como -cliente-")
+
+      
+
+
 
           
 
