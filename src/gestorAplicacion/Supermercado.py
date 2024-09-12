@@ -107,7 +107,6 @@ class Supermercado:
             productos = bodega.getProductos()
             for unidad in productos:
                 if unidad.getTipo().getTipo() == tipo:
-                    print("Agregando " + unidad.getTipo().getNombre())
                     if unidad.getTipo() not in resultado:
                         resultado.append(unidad.getTipo())
         return resultado

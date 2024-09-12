@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class Persona(ABC):
     personas = []
 
-    def __init__(self, nombre, cedula, cargo="Cliente"):
+    def __init__(self, nombre, cedula, cargo):
         self.nombre = nombre
         self.cedula = cedula
         self.cargo = cargo

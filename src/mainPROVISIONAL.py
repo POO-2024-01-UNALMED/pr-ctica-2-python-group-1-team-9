@@ -98,13 +98,10 @@ def crearOrden():
             opcion = int(input("Seleccione una opción: "))
 
             if opcion == 1:
-                print("agregarProducto")
                 agregarProducto(orden)
             elif opcion == 2:
-                print("quitar_producto")
                 quitarProducto(orden)
             elif opcion == 3:
-                print("mostrar_orden")
                 mostrarOrden(orden)
             elif opcion == 4:
                     if len(orden.getProductos()) != 0:
@@ -118,6 +115,7 @@ def crearOrden():
                     exit = True
                     break
             elif opcion == 5:
+                orden.cancelarOrden()
                 print("--- Orden Cancelada ---")
                 exit = True
                 break
@@ -249,29 +247,32 @@ def agregarProducto(orden):
                     print("Producto agregado a la orden.")
 
 def quitarProducto(orden):
-    exit = False
-    while not exit:
-        unidades = orden.getProductos()
-        print(barraDeSeparacion)
-        print("=== Producto(s) actualmente en la orden ===\n")
-        for i, unidad in enumerate(unidades, start=1):
-            if unidad.isOferta():
-                print(f"{i}. {unidad.getTipo().getNombre()} {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
-            else:
-                print(f"{i}. {unidad.getTipo().getNombre()} ${unidad.calcularPrecio()}")
+    if len(orden.getProductos()) == 0:
+        print("\n---No hay productos en la orden---")
+    else:
+        exit = False
+        while not exit:
+            unidades = orden.getProductos()
+            print(barraDeSeparacion)
+            print("=== Producto(s) actualmente en la orden ===\n")
+            for i, unidad in enumerate(unidades, start=1):
+                if unidad.isOferta():
+                    print(f"{i}. {unidad.getTipo().getNombre()} {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
+                else:
+                    print(f"{i}. {unidad.getTipo().getNombre()} ${unidad.calcularPrecio()}")
 
-        i += 1
-        print(f"{i}. Cancelar")
+            i += 1
+            print(f"{i}. Cancelar")
 
-        try:
-            opcion = int(input("Seleccione un producto para remover: "))
-            if 1 <= opcion <= len(unidades):
-                orden.quitarUnidad(unidades[opcion - 1])
-                print("El producto se removió con éxito.")
-            elif opcion == i:
-                exit = True
-        except ValueError:
-            print("Opción inválida, por favor intente de nuevo.")
+            try:
+                opcion = int(input("Seleccione un producto para remover: "))
+                if 1 <= opcion <= len(unidades):
+                    orden.quitarUnidad(unidades[opcion - 1])
+                    print("El producto se removió con éxito.")
+                elif opcion == i:
+                    exit = True
+            except ValueError:
+                print("Opción inválida, por favor intente de nuevo.")
 
 def mostrarOrden(orden):
     print(barraDeSeparacion)
@@ -432,10 +433,22 @@ def deserializar():
     pklpersonas = open("src/tmp/personas.pkl", "rb")
     pklproductos = open("src/tmp/productos.pkl", "rb")
     pklsupermercados = open("src/tmp/supermercados.pkl", "rb")
-    Descuento.setDescuentos = pickle.load(pkldescuentos)
-    Persona.setPersonas = pickle.load(pklpersonas)
-    Producto.setListaProductos = pickle.load(pklproductos)
-    Supermercado.setSupermercados = pickle.load(pklsupermercados)
+    try:
+        Descuento.setDescuentos(pickle.load(pkldescuentos))
+    except EOFError:
+        print("El archivo de descuentos está vacio")
+    try:
+        Persona.setPersonas(pickle.load(pklpersonas))
+    except EOFError:
+        print("El archivo de personas está vacio")
+    try:
+        Producto.setListaProductos(pickle.load(pklproductos))
+    except EOFError:
+        print("El archivo de productos está vacio")
+    try:
+        Supermercado.setSupermercados(pickle.load(pklsupermercados))
+    except EOFError:
+        print("El archivo de supermercados está vacio")
     pkldescuentos.close()
     pklpersonas.close()
     pklproductos.close()
@@ -465,7 +478,7 @@ def serializar():
 #Switch principal
 if __name__ == "__main__":
 
-
+    '''
     sup1 = Supermercado("MercaChicles", 1000000)
     sup2 = Supermercado("El Gangazo", 12000000)
     sup3 = Supermercado("Mercatodo", 900000)
@@ -502,13 +515,45 @@ if __name__ == "__main__":
 
     uni1 = Unidad("2024-09-20", prod1, bod1)
     uni2 = Unidad("2024-08-01", prod1, bod1)
-    uni3 = Unidad("2024-10-05", prod1, bod2)
-    uni4 = Unidad("2024-09-20", prod1, bod1)
-    uni5 = Unidad("2024-08-01", prod2, bod1)
-    uni6 = Unidad("2024-10-05", prod2, bod2)
-    uni7 = Unidad("2024-09-20", prod2, bod1)
-    uni8 = Unidad("2024-08-01", prod3, bod1)
-    uni9 = Unidad("2024-10-05", prod3, bod2)
+    uni3 = Unidad("2024-10-05", prod1, bod1)
+    uni4 = Unidad("2024-09-20", prod1, bod2)
+    uni5 = Unidad("2024-08-01", prod1, bod2)
+    uni6 = Unidad("2024-10-05", prod1, bod3)
+    uni7 = Unidad("2024-09-20", prod1, bod3)
+    uni8 = Unidad("2024-08-01", prod1, bod3)
+    uni9 = Unidad("2024-10-05", prod1, bod4)
+    uni10 = Unidad("2024-09-20", prod1, bod4)
+    uni11 = Unidad("2024-08-01", prod1, bod4)
+    uni12 = Unidad("2024-08-01", prod1, bod4)
+    uni13 = Unidad("2024-10-05", prod1, bod4)
+    uni14 = Unidad("2024-09-20", prod1, bod5)
+    uni15 = Unidad("2024-08-01", prod1, bod5)
+    uni16 = Unidad("2024-10-05", prod1, bod5)
+    uni17 = Unidad("2024-09-20", prod1, bod5)
+    uni18 = Unidad("2024-08-01", prod1, bod6)
+    uni19 = Unidad("2024-10-05", prod1, bod6)
+    uni20 = Unidad("2024-10-05", prod1, bod6)
+
+    uni21 = Unidad("2024-09-20", prod2, bod1)
+    uni22 = Unidad("2024-08-01", prod2, bod1)
+    uni23 = Unidad("2024-10-05", prod2, bod1)
+    uni24 = Unidad("2024-09-20", prod2, bod1)
+    uni25 = Unidad("2024-08-01", prod2, bod2)
+    uni26 = Unidad("2024-10-05", prod2, bod3)
+    uni27 = Unidad("2024-09-20", prod2, bod3)
+    uni28 = Unidad("2024-08-01", prod2, bod4)
+    uni29 = Unidad("2024-10-05", prod2, bod4)
+    uni30 = Unidad("2024-09-20", prod2, bod4)
+    uni31 = Unidad("2024-08-01", prod2, bod4)
+    uni32 = Unidad("2024-10-05", prod2, bod4)
+    uni33 = Unidad("2024-10-05", prod2, bod4)
+    uni34 = Unidad("2024-09-20", prod2, bod5)
+    uni35 = Unidad("2024-08-01", prod2, bod5)
+    uni36 = Unidad("2024-10-05", prod2, bod5)
+    uni37 = Unidad("2024-09-20", prod2, bod5)
+    uni38 = Unidad("2024-08-01", prod2, bod5)
+    uni39 = Unidad("2024-10-05", prod2, bod6)
+    uni40 = Unidad("2024-10-05", prod2, bod6)
 
     uni10 = Unidad("2024-09-30", prod4, bod2)
     uni11 = Unidad("2024-07-08", prod4, bod1)
@@ -520,10 +565,9 @@ if __name__ == "__main__":
 
     descuento_uno = Descuento("Refrescantes y baratas", TipoProducto.BEBIDA, 10)
     descuento_dos = Descuento("Borrachera económica", prod2, 15)
+    '''
 
-
-    #deserializar()
-    print(len(Supermercado.getSupermercados()))
+    deserializar()
     exit = False
     while not exit:
         print(barraDeSeparacion)
@@ -567,7 +611,7 @@ if __name__ == "__main__":
                     print(barraDeSeparacion)
                     print("- Opción inválida, por favor intente de nuevo.")
         elif opcion == 3:
-            #serializar()
+            serializar()
             exit = True
         else:
             print("Opción inválida, por favor intente de nuevo.")
