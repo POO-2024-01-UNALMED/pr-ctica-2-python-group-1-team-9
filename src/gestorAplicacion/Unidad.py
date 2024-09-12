@@ -4,16 +4,18 @@ from random import randint
 class Unidad:
     actual_codigo = 0
 
-    def __init__(self, vencimiento: str, tipo, ubicacion):
+    def __init__(self, vencimiento: str, tipo, ubicacion, oferta=False):
         Unidad.actual_codigo += 1
         self.codigo = Unidad.actual_codigo
         self.vencimiento = vencimiento
-        self.tipo_producto = tipo
+        self.tipo = tipo
         self.bodega = ubicacion
         self.descuentos = []
         self.en_paquete = False
         tipo.agregarUnidad(self, ubicacion)
         ubicacion.agregarProducto(self)
+        self.oferta = oferta
+        self.ubicacion = ubicacion
 
     def getCodigo(self) -> int:
         return self.codigo
@@ -28,10 +30,10 @@ class Unidad:
         self.vencimiento = vencimiento
 
     def getTipo(self):
-        return self.tipo_producto
+        return self.tipo
 
     def setTipo(self, tipo):
-        self.tipo_producto = tipo
+        self.tipo = tipo
 
     def getUbicacion(self):
         return self.bodega
