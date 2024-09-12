@@ -65,7 +65,7 @@ class VentanaPrincipal:
         menuInicio = tk.Menu(menuBar, tearoff=0)
         menuBar.add_cascade(label="Inicio", menu=menuInicio)
         menuInicio.add_command(label="Salir de la aplicación", command=self.root.destroy)
-        menuInicio.add_command(label="Descripción del sistema", command=self.crearVentanaInicio )
+        menuInicio.add_command(label="Descripción del sistema", command=lambda: self.labelP4.config(image="", text="Esta es la descripción del sistema"))
 
     def inicializarRutasFotos(self): # Funcion para crear todas las rutas a las fotos que van en el frameP6
         self.rutasFotos = [
@@ -131,7 +131,8 @@ class VentanaPrincipal:
         self.cambiarP4(self.contador2) # Se llama a esta funcio para que aparezca una imagen en labelP4 de una vez se inicia el programa
 
         # Botón para ir al programa principal (va dentro de p4 en la parte inferior)
-        self.botonP4 = tk.Button(self.frameP4, text="Programa principal", font=("Arial"), bg="gray90")
+        self.botonP4 = tk.Button(self.frameP4, text="Programa principal",
+                                 font=("Arial"), bg="gray90", command=self.crearVentanaInicio )
         self.botonP4.grid(row=1, column=0, sticky="ew", ipady=15)
 
     def crearFramesInternosP2(self):
@@ -317,6 +318,6 @@ class VentanaPrincipal:
         self.contador = (self.contador + 1) % 4
 
     def crearVentanaInicio(self):
+        #self.withdraw()
         self.segundaventana = tk.Toplevel()
         VentanaInicio(self.segundaventana)
-        #VentanaInicio.mainloop()
