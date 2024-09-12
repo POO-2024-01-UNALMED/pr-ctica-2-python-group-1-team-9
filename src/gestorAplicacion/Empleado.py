@@ -1,4 +1,4 @@
-from .Persona import Persona
+from gestorAplicacion.Persona import Persona
 
 class Empleado(Persona):
     _actual_id = 0
@@ -11,35 +11,35 @@ class Empleado(Persona):
         self._activo = True
         Empleado._actual_id += 1
         self._id = Empleado._actual_id
-        supermercado.agregar_empleado(self)
+        supermercado.agregarEmpleado(self)
         Empleado.empleados.append(self)
 
     def informacion(self):
-        return f"{self.get_cargo()} {self.get_nombre()} con cédula {self.get_cedula()}"
+        return f"{self.getCargo()} {self.getNombre()} con cédula {self.getCedula()}"
     
 
-    def get_id(self):
+    def getId(self):
         return self._id
 
-    def set_id(self, id):
+    def setId(self, id):
         self._id = id
 
-    def get_activo(self):
+    def getActivo(self):
         return self._activo
 
-    def set_activo(self, activo):
+    def setActivo(self, activo):
         self._activo = activo
 
-    def get_salario(self):
+    def getSalario(self):
         return self._salario
 
-    def set_salario(self, salario):
+    def setSalario(self, salario):
         self._salario = salario
 
-    def get_supermercado(self):
+    def getSupermercado(self):
         return self._supermercado
 
-    def set_supermercado(self, supermercado):
+    def setSupermercado(self, supermercado):
         self._supermercado = supermercado
 
     def __str__(self):

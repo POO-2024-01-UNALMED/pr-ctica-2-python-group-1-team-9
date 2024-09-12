@@ -14,38 +14,38 @@ class Persona(ABC):
         pass
 
  
-    def set_nombre(self, nombre):
+    def setNombre(self, nombre):
         self.nombre = nombre
 
-    def get_nombre(self):
+    def getNombre(self):
         return self.nombre
     
-    def set_cedula(self, cedula):
+    def setCedula(self, cedula):
         self.cedula = cedula
 
-    def get_cedula(self):
+    def getCedula(self):
         return self.cedula
 
-    def set_cargo(self, cargo):
+    def setCargo(self, cargo):
         self.cargo = cargo
     
-    def get_cargo(self):
+    def getCargo(self):
         return self.cargo
     
     @classmethod
-    def get_personas():
-        return Persona.get_personas
+    def getPersonas():
+        return Persona.getPersonas
 
     @classmethod
-    def get_personas(cls):
+    def getPersonas(cls):
         return cls.personas
 
     @classmethod
-    def set_personas(cls, personas):
+    def setPersonas(cls, personas):
         cls.personas = personas
 
     @classmethod
-    def agregar_persona(cls, persona):
+    def agregarPersona(cls, persona):
         cls.personas.append(persona)
 
     def __str__(self):

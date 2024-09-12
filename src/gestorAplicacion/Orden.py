@@ -7,7 +7,7 @@ class Orden:
         Orden.actual_id += 1
         self.id = Orden.actual_id
         self.supermercado = supermercado
-        supermercado.agregar_orden(self)
+        supermercado.agregarOrden(self)
         self.empleado = vendedor
         self.cliente = comprador
         self.productos = []
@@ -15,59 +15,59 @@ class Orden:
         self.fecha = datetime.now().date().isoformat()
         self.hora = datetime.now().time().isoformat()
 
-    def agregar_producto(self, supermercado, producto, cantidad):
+    def agregarProducto(self, supermercado, producto, cantidad):
         while cantidad > 0:
             for unidad in producto.unidades:
                 if not unidad.oferta and unidad.ubicacion.supermercado == supermercado:
                     self.productos.append(unidad)
-                    unidad.tipo.quitar_unidad(unidad)
-                    unidad.ubicacion.quitar_producto(unidad)
+                    unidad.tipo.quitarUnidad(unidad)
+                    unidad.ubicacion.quitarProducto(unidad)
                     cantidad -= 1
                     break
 
-    def agregar_unidad(self, unidad):
+    def agregarUnidad(self, unidad):
         self.productos.append(unidad)
-        unidad.tipo.quitar_unidad(unidad)
-        unidad.ubicacion.quitar_producto(unidad)
+        unidad.tipo.quitarUnidad(unidad)
+        unidad.ubicacion.quitarProducto(unidad)
 
-    def quitar_unidad(self, unidad):
+    def quitarUnidad(self, unidad):
         self.productos.remove(unidad)
-        unidad.tipo.agregar_unidad(unidad, unidad.ubicacion)
-        unidad.ubicacion.agregar_producto(unidad)
+        unidad.tipo.agregarUnidad(unidad, unidad.ubicacion)
+        unidad.ubicacion.agregarProducto(unidad)
 
-    def calcular_precio_total(self):
-        total = sum(unidad.calcular_precio() for unidad in self.productos)
+    def calcularPrecioTotal(self):
+        total = sum(unidad.calcularPrecio() for unidad in self.productos)
         return total
 
-    def completar_orden(self):
-        self.cliente.agregar_orden(self)
+    def completarOrden(self):
+        self.cliente.agregarOrden(self)
 
-    def cancelar_orden(self):
+    def cancelarOrden(self):
         for unidad in self.productos:
-            unidad.tipo.agregar_unidad(unidad, unidad.ubicacion)
-            unidad.ubicacion.agregar_producto(unidad)
+            unidad.tipo.agregarUnidad(unidad, unidad.ubicacion)
+            unidad.ubicacion.agregarProducto(unidad)
         self.productos = None
 
-    def set_supermercado(self, supermercado):
+    def setSupermercado(self, supermercado):
         self.supermercado = supermercado
 
-    def get_supermercado(self):
+    def getSupermercado(self):
         return self.supermercado
     
-    def set_empleado(self, empleado):
+    def setEmpleado(self, empleado):
         self.empleado = empleado
 
-    def get_empleado(self):
+    def getEmpleado(self):
         return self.empleado
     
-    def set_cliente(self, cliente):
+    def setCliente(self, cliente):
         self.cliente = cliente
 
-    def get_cliente(self):
+    def getCliente(self):
         return self.cliente
     
-    def set_productos(self, productos):
+    def setProductos(self, productos):
         self.productos = productos
 
-    def get_productos(self):
+    def getProductos(self):
         return self.productos
