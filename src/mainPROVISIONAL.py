@@ -381,12 +381,18 @@ def intercambioProductos():
                 recibe = supermercado1
                 break
             else:
-                print("{barraDeSeparacion}\n- Opción inválida, por favor intente de nuevo.")
+                print(f"{barraDeSeparacion}\n- Opción inválida, por favor intente de nuevo.")
         
         # Intercambio de productos
-        productosenv = [unidad.getTipo() for bodega in envia.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo() not in productosenv]
+        productosenv = []
+        for bodega in envia.getBodegas():
+            for unidad in bodega.getProductos():
+                TipoAVerificar = unidad.getTipo()
+                if TipoAVerificar not in productosenv:
+                    productosenv.append(TipoAVerificar)
+#        productosenv = [unidad.getTipo() for bodega in envia.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo() not in productosenv]
 
-        print("{barraDeSeparacion}\n=== Productos disponibles para enviar ===\n")
+        print(f"{barraDeSeparacion}\n=== Productos disponibles para enviar ===\n")
         for i, p in enumerate(productosenv, 1):
             print(f"{i}. {p.getNombre()}")
 
