@@ -390,7 +390,6 @@ def intercambioProductos():
                 TipoAVerificar = unidad.getTipo()
                 if TipoAVerificar not in productosenv:
                     productosenv.append(TipoAVerificar)
-#        productosenv = [unidad.getTipo() for bodega in envia.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo() not in productosenv]
 
         print(f"{barraDeSeparacion}\n=== Productos disponibles para enviar ===\n")
         for i, p in enumerate(productosenv, 1):
@@ -401,7 +400,7 @@ def intercambioProductos():
 
         unidades = [unidad for bodega in envia.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo() == seleccionado]
 
-        print("{barraDeSeparacion}\n=== Unidades disponibles para enviar ===\n")
+        print(f"{barraDeSeparacion}\n=== Unidades disponibles para enviar ===\n")
         for i, unidad in enumerate(unidades, 1):
             if not unidad.isOferta():
                 print(f"{i}. {unidad.getTipo().getNombre()} Sin oferta")
