@@ -1,9 +1,9 @@
-from uiMain.VentanaPrincipal import VentanaPrincipal
+from uiMain.VentanaInicio import VentanaInicio
 import tkinter as tk
 
 
 if __name__ == "__main__":
 
     root = tk.Tk()
-    ventana = VentanaPrincipal(root)
+    ventana = VentanaInicio(root)
     root.mainloop()
