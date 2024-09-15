@@ -17,7 +17,7 @@ class VentanaPrincipal():
 
         self.hojasDeVida = [
             "Soy Jose Manuel, tengo 20 años, soy de Pueblorrico, un pequeño municipio de Antioquia, me gusta mucho salir a caminar y pasar tiempo en familia, este es mi primer semestre en la carrera (me traslade desde mecánica) y estoy entusiamado por aprender 😀",
-            "Hoja de vida de Oscar", 
+            "Mi nombre es Oscar Daniel, nací en el municipio de Itaguí y estoy en el segundo semestre de Ingeniería de sistemas en la Universidad Nacional de Colombia sede Medellín, mi objetivo es convertirme en el mejor entrenador pokem... digo aprender mucho...", 
             "Hoja de vida de Simon", 
             "Hoja de vida de Julian"
         ]

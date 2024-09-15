@@ -8,7 +8,7 @@ from gestorAplicacion.Producto import Producto
 from gestorAplicacion.Unidad import Unidad
 from gestorAplicacion.Descuento import Descuento
 from gestorAplicacion.Bodega import Bodega
-import pickle
+from baseDatos.Serializacion import Serializacion
 
 barraDeSeparacion = "______________________________________________________________________________________________________"
 
@@ -290,9 +290,149 @@ def mostrarOrden(orden):
     print(barraDeSeparacion)
 
 #F2
-def administarInventario():
-    print("F2")
-    pass
+def contar_tipos_diferentes(unidades):
+    tipos_unicos = []
+    for unidad in unidades:
+        if unidad.get_tipo().get_tipo() not in tipos_unicos:
+            tipos_unicos.append(unidad.get_tipo().get_tipo())
+    print("Retornando:", len(tipos_unicos))
+    return len(tipos_unicos)
+
+
+def administrar_inventario():
+    supermercados = Supermercado.get_supermercados()
+    personas = Persona.get_personas()
+    empleados = []
+
+    print("______________________________________________________________________________________________________")
+    print("Lista de Supermercados:\n")
+    for idx, supermercado in enumerate(supermercados, start=1):
+        print(f"{idx}. {supermercado.get_nombre()}")
+
+    opcion = int(input("Seleccione un supermercado: "))
+    while opcion < 1 or opcion > len(supermercados):
+        opcion = int(input("- Opción inválida, por favor intente de nuevo: "))
+
+    supermercado = supermercados[opcion - 1]
+    empleados = supermercado.get_empleados()
+    print(f"- Supermercado {supermercado.get_nombre()} seleccionado.")
+
+    print("\nLista de Empleados:")
+    for idx, empleado in enumerate(empleados, start=1):
+        print(f"{idx}. {empleado.get_cargo()} {empleado.get_nombre()}")
+
+    opcion = int(input("\nSeleccione empleado encargado: "))
+    while opcion < 1 or opcion > len(empleados):
+        opcion = int(input("- Opción inválida, por favor intente de nuevo: "))
+
+    empleado = empleados[opcion - 1]
+    print(f"- {empleado.get_cargo()} {empleado.get_nombre()} seleccionado.\n")
+
+    eleccion1 = int(input("Ingrese los días para la búsqueda: "))
+    while eleccion1 < 0:
+        eleccion1 = int(input("- Opción inválida, por favor intente de nuevo: "))
+
+    bodegas = supermercado.get_bodegas()
+    unidades = []
+    avencer = []
+
+    for bodega in bodegas:
+        unidades.extend(bodega.get_productos())
+
+    for unidad in unidades:
+        dias = unidad.dias_para_vencimiento()
+        if dias <= eleccion1:
+            avencer.append(unidad)
+
+    avencer.sort(key=lambda u: u.dias_para_vencimiento())
+
+    if not avencer:
+        print("No hay productos próximos a vencer en ese plazo.")
+    else:
+        print("______________________________________________________________________________________________________\nEstos son los productos vencidos o próximos a vencer:\n")
+        for unidad in avencer:
+            if unidad.dias_para_vencimiento() <= 0:
+                print(f"Nombre: {unidad.get_tipo().get_nombre()}, Código: {unidad.get_codigo()}, Ubicación: {unidad.get_ubicacion().get_nombre()}, VENCIDO")
+                unidad.get_ubicacion().quitar_producto(unidad)
+            else:
+                print(f"Nombre: {unidad.get_tipo().get_nombre()}, Código: {unidad.get_codigo()}, Ubicación: {unidad.get_ubicacion().get_nombre()}, Días para vencer: {unidad.dias_para_vencimiento()}")
+
+        disponibles = sum(1 for unidad in avencer if unidad.dias_para_vencimiento() > 0)
+        if disponibles > 0:
+            print("______________________________________________________________________________________________________\nProductos disponibles para hacerle descuentos:")
+        else:
+            print("No hay productos disponibles para hacer descuentos.")
+
+        for unidad in avencer:
+            if unidad.dias_para_vencimiento() > 0:
+                print(f"\n->Nombre: {unidad.get_tipo().get_nombre()}, Código: {unidad.get_codigo()}, Días para vencer: {unidad.dias_para_vencimiento()}")
+                if not unidad.get_descuentos():
+                    eleccion2 = input("  No tiene descuentos disponibles ¿desea crear uno? (s/n): ").lower()
+                    while eleccion2 not in ['s', 'n']:
+                        eleccion2 = input("- Opción inválida, por favor intente de nuevo: ").lower()
+                    if eleccion2 == 's':
+                        nombre_descuento = input("  Ingrese el nombre del descuento: ")
+                        porcentaje_descuento = int(input("  Ingrese el porcentaje de descuento: "))
+                        Descuento(nombre_descuento, unidad, porcentaje_descuento)
+                else:
+                    mejor_oferta = unidad.calcular_oferta()
+                    print(f"  Mejor descuento: Nombre del descuento: '{mejor_oferta.get_nombre()}', Descuento: {mejor_oferta.get_porcentaje_descuento()}% (Antes: {unidad.get_tipo().get_precio()} Ahora: {unidad.calcular_precio()})")
+                    eleccion3 = input("  ¿Desea agregar un mejor descuento? (s/n): ").lower()
+                    while eleccion3 not in ['s', 'n']:
+                        eleccion3 = input("- Opción inválida, por favor intente de nuevo: ").lower()
+                    if eleccion3 == 's':
+                        nombre_descuento = input("  Ingrese el nombre del descuento: ")
+                        porcentaje_descuento = int(input("  Ingrese el porcentaje de descuento: "))
+                        Descuento(nombre_descuento, unidad, porcentaje_descuento)
+
+        disponibles_para_paquetes = [unidad for unidad in avencer if unidad.dias_para_vencimiento() > 0]
+        tipos = set(unidad.get_tipo().get_tipo() for unidad in disponibles_para_paquetes)
+
+        if len(tipos) > 1:
+            eleccion4 = input("\n¿Desea crear paquetes de promociones? (s/n): ").lower()
+            while eleccion4 not in ['s', 'n']:
+                eleccion4 = input("- Opción inválida, por favor intente de nuevo: ").lower()
+            if eleccion4 == 's':
+                while True:
+                    paquete = []
+                    tipos_disp = list(tipos)
+                    for unidad in disponibles_para_paquetes:
+                        if unidad.get_tipo().get_tipo() in tipos_disp and not unidad.is_en_paquete():
+                            paquete.append(unidad)
+                            unidad.set_en_paquete(True)
+                            unidad.get_ubicacion().get_productos().remove(unidad)
+                            tipos_disp.remove(unidad.get_tipo().get_tipo())
+                    if len(paquete) > 1:
+                        supermercado.agregar_paquete_promocion(paquete)
+                    else:
+                        for uni in paquete:
+                            uni.set_en_paquete(False)
+                            uni.get_ubicacion().get_productos().append(uni)
+                        break
+                print("______________________________________________________________________________________________________")
+                print("Paquetes creados.")
+                for i, paquete in enumerate(supermercado.get_paquetes_promocion(), start=1):
+                    valor_promo = sum(u.calcular_precio() for u in paquete)
+                    print(f"______________________________________________________________________________________________________\nPaquete #{i} Precio: {valor_promo}")
+                    for u in paquete:
+                        print(f"Producto: {u.get_tipo().get_nombre()} Código: {u.get_codigo()}")
+                    eleccion5 = input("\n¿Desea hacer descuento al precio? (s/n): ").lower()
+                    while eleccion5 not in ['s', 'n']:
+                        eleccion5 = input("- Opción inválida, por favor intente de nuevo: ").lower()
+                    if eleccion5 == 's':
+                        descuento_paquete = int(input("Ingrese el descuento que desea: "))
+                        for u in paquete:
+                            if u.calcular_precio() == u.get_tipo().get_precio():
+                                Descuento(None, u, descuento_paquete)
+                            else:
+                                u.calcular_oferta().set_porcentaje_descuento(
+                                    (u.calcular_oferta().get_porcentaje_descuento() * descuento_paquete / 100) + u.calcular_oferta().get_porcentaje_descuento()
+                                )
+                        valor_promo = sum(u.calcular_precio() for u in paquete)
+                        print(f"______________________________________________________________________________________________________\nPaquete #{i} Precio con descuento: {valor_promo}")
+        else:
+            print("No hay suficientes productos para crear paquetes promocionados.")
+
 
 
 #F3
@@ -432,58 +572,10 @@ def verificarVencimiento(supermercado, dias=0):
 
 
 
-
-def deserializar():
-    pkldescuentos = open("src/tmp/descuentos.pkl", "rb")
-    pklpersonas = open("src/tmp/personas.pkl", "rb")
-    pklproductos = open("src/tmp/productos.pkl", "rb")
-    pklsupermercados = open("src/tmp/supermercados.pkl", "rb")
-    try:
-        Descuento.setDescuentos(pickle.load(pkldescuentos))
-    except EOFError:
-        print("El archivo de descuentos está vacio")
-    try:
-        Persona.setPersonas(pickle.load(pklpersonas))
-    except EOFError:
-        print("El archivo de personas está vacio")
-    try:
-        Producto.setListaProductos(pickle.load(pklproductos))
-    except EOFError:
-        print("El archivo de productos está vacio")
-    try:
-        Supermercado.setSupermercados(pickle.load(pklsupermercados))
-    except EOFError:
-        print("El archivo de supermercados está vacio")
-    pkldescuentos.close()
-    pklpersonas.close()
-    pklproductos.close()
-    pklsupermercados.close()
-    
-def serializar():
-    pkldescuentos = open("src/tmp/descuentos.pkl", "wb")
-    pklpersonas = open("src/tmp/personas.pkl", "wb")
-    pklproductos = open("src/tmp/productos.pkl", "wb")
-    pklsupermercados = open("src/tmp/supermercados.pkl", "wb")
-    descuentos = Descuento.getDescuentos()
-    personas = Persona.getPersonas()
-    productos = Producto.getListaProductos()
-    supermercados = Supermercado.getSupermercados()
-    pickle.dump(descuentos, pkldescuentos)
-    pickle.dump(personas, pklpersonas)
-    pickle.dump(productos, pklproductos)
-    pickle.dump(supermercados, pklsupermercados)
-    pkldescuentos.close()
-    pklpersonas.close()
-    pklproductos.close()
-    pklsupermercados.close()
-
-
-
-
 #Switch principal
 if __name__ == "__main__":
 
-    '''
+    
     sup1 = Supermercado("MercaChicles", 1000000)
     sup2 = Supermercado("El Gangazo", 12000000)
     sup3 = Supermercado("Mercatodo", 900000)
@@ -559,20 +651,138 @@ if __name__ == "__main__":
     uni38 = Unidad("2024-08-01", prod2, bod5)
     uni39 = Unidad("2024-10-05", prod2, bod6)
     uni40 = Unidad("2024-10-05", prod2, bod6)
+    uni41 = Unidad(Unidad.generarFechaVencimiento(), prod2, bod7)
+    
+    uni42 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod1)
+    uni43 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod1)
+    uni44 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod1)
+    uni45 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod2)
+    uni46 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod2)
+    uni47 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod2)
+    uni48 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod3)
+    uni49 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod3)
+    uni50 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod3)
+    uni51 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod4)
+    uni52 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod4)
+    uni53 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod5)
+    uni54 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod5)
+    uni55 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod5)
+    uni56 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod6)
+    uni57 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod6)
+    uni58 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod7)
+    uni59 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod7)
+    uni60 = Unidad(Unidad.generarFechaVencimiento(), prod3, bod7)
 
-    uni10 = Unidad("2024-09-30", prod4, bod2)
-    uni11 = Unidad("2024-07-08", prod4, bod1)
-    uni12 = Unidad("2024-11-27", prod4, bod1)
-    uni13 = Unidad("2024-12-08", prod5, bod2)
-    uni14 = Unidad("2024-10-20", prod5, bod1)
-    uni15 = Unidad("2024-09-27", prod6, bod2)
-    uni16 = Unidad("2025-01-30", prod6, bod1)
+    uni61 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod1)
+    uni62 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod1)
+    uni63 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod1)
+    uni64 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod2)
+    uni65 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod2)
+    uni66 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod2)
+    uni67 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod3)
+    uni68 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod3)
+    uni69 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod3)
+    uni70 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod3)
+    uni71 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod4)
+    uni72 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod4)
+    uni73 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod5)
+    uni74 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod5)
+    uni75 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod5)
+    uni76 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod6)
+    uni77 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod6)
+    uni78 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod7)
+    uni79 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod7)
+    uni80 = Unidad(Unidad.generarFechaVencimiento(), prod4, bod7)
 
+    uni81 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod2)
+    uni82 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod2)
+    uni83 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod2)
+    uni84 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod2)
+    uni85 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod3)
+    uni86 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod3)
+    uni87 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod3)
+    uni88 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod3)
+    uni89 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod4)
+    uni90 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod4)
+    uni91 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod4)
+    uni92 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod4)
+    uni93 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod5)
+    uni94 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod5)
+    uni95 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod6)
+    uni96 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod6)
+    uni97 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod6)
+    uni98 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod7)
+    uni99 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod7)
+    uni100 = Unidad(Unidad.generarFechaVencimiento(), prod5, bod7)
+
+    uni101 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod1)
+    uni102 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod1)
+    uni103 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod1)
+    uni104 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod1)
+    uni105 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod2)
+    uni106 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod3)
+    uni107 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod3)
+    uni108 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod4)
+    uni109 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod4)
+    uni110 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod5)
+    uni111 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod5)
+    uni112 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod5)
+    uni113 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod6)
+    uni114 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod6)
+    uni115 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod6)
+    uni116 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod6)
+    uni117 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod7)
+    uni118 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod7)
+    uni119 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod7)
+    uni120 = Unidad(Unidad.generarFechaVencimiento(), prod6, bod7)
+
+    uni131 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod1)
+    uni132 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod1)
+    uni133 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod1)
+    uni134 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod2)
+    uni135 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod2)
+    uni136 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod3)
+    uni137 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod3)
+    uni138 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod4)
+    uni139 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod4)
+    uni140 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod5)
+    uni141 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod5)
+    uni142 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod5)
+    uni143 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod6)
+    uni144 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod6)
+    uni145 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod6)
+    uni146 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod7)
+    uni147 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod7)
+    uni148 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod7)
+    uni149 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod7)
+    uni150 = Unidad(Unidad.generarFechaVencimiento(), prod7, bod7)
+
+    uni151 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod1)
+    uni152 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod1)
+    uni153 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod1)
+    uni154 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod1)
+    uni155 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod2)
+    uni156 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod3)
+    uni157 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod3)
+    uni158 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod4)
+    uni159 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod4)
+    uni160 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod4)
+    uni161 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod4)
+    uni162 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod4)
+    uni163 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod6)
+    uni164 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod6)
+    uni165 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod6)
+    uni166 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod6)
+    uni167 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod6)
+    uni168 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod6)
+    uni169 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod7)
+    uni170 = Unidad(Unidad.generarFechaVencimiento(), prod8, bod7)
+    
     descuento_uno = Descuento("Refrescantes y baratas", TipoProducto.BEBIDA, 10)
     descuento_dos = Descuento("Borrachera económica", prod2, 15)
-    '''
+    
 
-    deserializar()
+    Serializacion.deserializar()
     exit = False
     while not exit:
         print(barraDeSeparacion)
@@ -616,7 +826,7 @@ if __name__ == "__main__":
                     print(barraDeSeparacion)
                     print("- Opción inválida, por favor intente de nuevo.")
         elif opcion == 3:
-            serializar()
+            Serializacion.serializar()
             exit = True
         else:
             print("Opción inválida, por favor intente de nuevo.")
