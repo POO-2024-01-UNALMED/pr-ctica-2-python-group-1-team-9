@@ -371,22 +371,22 @@ def administrarInventario():
                     while eleccion2 not in ['s', 'n']:
                         eleccion2 = input("- Opción inválida, por favor intente de nuevo: ").lower()
                     if eleccion2 == 's':
-                        nombre_descuento = input("  Ingrese el nombre del descuento: ")
-                        porcentaje_descuento = int(input("  Ingrese el porcentaje de descuento: "))
-                        Descuento(nombre_descuento, unidad, porcentaje_descuento)
+                        nombreDescuento = input("  Ingrese el nombre del descuento: ")
+                        porcentajeDescuento = int(input("  Ingrese el porcentaje de descuento: "))
+                        Descuento(nombreDescuento, unidad, porcentajeDescuento)
                 else:
-                    mejor_oferta = unidad.calcularOferta()
-                    print(f"  Mejor descuento: Nombre del descuento: '{mejor_oferta.getNombre()}', Descuento: {mejor_oferta.getPorcentajeDescuento()}% (Antes: {unidad.getTipo().getPrecio()} Ahora: {unidad.calcularPrecio()})")
+                    mejorOferta = unidad.calcularOferta()
+                    print(f"  Mejor descuento: Nombre del descuento: '{mejorOferta.getNombre()}', Descuento: {mejorOferta.getPorcentajeDescuento()}% (Antes: {unidad.getTipo().getPrecio()} Ahora: {unidad.calcularPrecio()})")
                     eleccion3 = input("  ¿Desea agregar un mejor descuento? (s/n): ").lower()
                     while eleccion3 not in ['s', 'n']:
                         eleccion3 = input("- Opción inválida, por favor intente de nuevo: ").lower()
                     if eleccion3 == 's':
-                        nombre_descuento = input("  Ingrese el nombre del descuento: ")
-                        porcentaje_descuento = int(input("  Ingrese el porcentaje de descuento: "))
-                        Descuento(nombre_descuento, unidad, porcentaje_descuento)
+                        nombreDescuento = input("  Ingrese el nombre del descuento: ")
+                        porcentajeDescuento = int(input("  Ingrese el porcentaje de descuento: "))
+                        Descuento(nombreDescuento, unidad, porcentajeDescuento)
 
-        disponibles_para_paquetes = [unidad for unidad in avencer if unidad.diasParaVencimiento() > 0]
-        tipos = set(unidad.getTipo().getTipo() for unidad in disponibles_para_paquetes)
+        disponiblesParaPaquetes = [unidad for unidad in avencer if unidad.diasParaVencimiento() > 0]
+        tipos = set(unidad.getTipo().getTipo() for unidad in disponiblesParaPaquetes)
 
         if len(tipos) > 1:
             eleccion4 = input("\n¿Desea crear paquetes de promociones? (s/n): ").lower()
@@ -395,13 +395,13 @@ def administrarInventario():
             if eleccion4 == 's':
                 while True:
                     paquete = []
-                    tipos_disp = list(tipos)
-                    for unidad in disponibles_para_paquetes:
-                        if unidad.getTipo().getTipo() in tipos_disp and not unidad.isEnPaquete():
+                    tiposDisp = list(tipos)
+                    for unidad in disponiblesParaPaquetes:
+                        if unidad.getTipo().getTipo() in tiposDisp and not unidad.getEnPaquete():
                             paquete.append(unidad)
                             unidad.setEnPaquete(True)
                             unidad.getUbicacion().getProductos().remove(unidad)
-                            tipos_disp.remove(unidad.getTipo().getTipo())
+                            tiposDisp.remove(unidad.getTipo().getTipo())
                     if len(paquete) > 1:
                         supermercado.agregarPaquetePromocion(paquete)
                     else:
@@ -412,26 +412,27 @@ def administrarInventario():
                 print("______________________________________________________________________________________________________")
                 print("Paquetes creados.")
                 for i, paquete in enumerate(supermercado.getPaquetesPromocion(), start=1):
-                    valor_promo = sum(u.calcularPrecio() for u in paquete)
-                    print(f"______________________________________________________________________________________________________\nPaquete #{i} Precio: {valor_promo}")
+                    valorPromo = sum(u.calcularPrecio() for u in paquete)
+                    print(f"______________________________________________________________________________________________________\nPaquete #{i} Precio: {valorPromo}")
                     for u in paquete:
                         print(f"Producto: {u.getTipo().getNombre()} Código: {u.getCodigo()}")
                     eleccion5 = input("\n¿Desea hacer descuento al precio? (s/n): ").lower()
                     while eleccion5 not in ['s', 'n']:
                         eleccion5 = input("- Opción inválida, por favor intente de nuevo: ").lower()
                     if eleccion5 == 's':
-                        descuento_paquete = int(input("Ingrese el descuento que desea: "))
+                        descuentoPaquete = int(input("Ingrese el descuento que desea: "))
                         for u in paquete:
                             if u.calcularPrecio() == u.getTipo().getPrecio():
-                                Descuento(None, u, descuento_paquete)
+                                Descuento(None, u, descuentoPaquete)
                             else:
                                 u.calcularOferta().setPorcentajeDescuento(
-                                    (u.calcularOferta().getPorcentajeDescuento() * descuento_paquete / 100) + u.calcularOferta().getPorcentajeDescuento()
+                                    (u.calcularOferta().getPorcentajeDescuento() * descuentoPaquete / 100) + u.calcularOferta().getPorcentajeDescuento()
                                 )
-                        valor_promo = sum(u.calcularPrecio() for u in paquete)
-                        print(f"______________________________________________________________________________________________________\nPaquete #{i} Precio con descuento: {valor_promo}")
+                        valorPromo = sum(u.calcularPrecio() for u in paquete)
+                        print(f"______________________________________________________________________________________________________\nPaquete #{i} Precio con descuento: {valorPromo}")
         else:
             print("No hay suficientes productos para crear paquetes promocionados.")
+
 
 
 
