@@ -1,5 +1,5 @@
-from uiMain.VentanaPrincipal import VentanaPrincipal as VentanaPrincipal
-from uiMain.VentanaInicio import VentanaInicio as VentanaInicio
+from VentanaPrincipal import VentanaPrincipal
+from VentanaInicio import VentanaInicio
 from gestorAplicacion.Supermercado import Supermercado
 from gestorAplicacion.Persona import Persona
 from gestorAplicacion.Empleado import Empleado
