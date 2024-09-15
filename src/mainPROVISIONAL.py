@@ -575,7 +575,7 @@ def verificarVencimiento(supermercado, dias=0):
 #Switch principal
 if __name__ == "__main__":
 
-    
+    '''
     sup1 = Supermercado("MercaChicles", 1000000)
     sup2 = Supermercado("El Gangazo", 12000000)
     sup3 = Supermercado("Mercatodo", 900000)
@@ -780,7 +780,7 @@ if __name__ == "__main__":
     
     descuento_uno = Descuento("Refrescantes y baratas", TipoProducto.BEBIDA, 10)
     descuento_dos = Descuento("Borrachera económica", prod2, 15)
-    
+    '''
 
     Serializacion.deserializar()
     exit = False

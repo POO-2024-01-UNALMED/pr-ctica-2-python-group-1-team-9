@@ -1,7 +1,7 @@
 import os
 import tkinter as tk
 from PIL import Image, ImageTk
-from VentanaInicio import VentanaInicio
+from uiMain.VentanaInicio import VentanaInicio
 
 class VentanaPrincipal():
     def __init__(self, root):
