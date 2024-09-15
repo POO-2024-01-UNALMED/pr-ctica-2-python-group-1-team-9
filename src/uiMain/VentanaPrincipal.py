@@ -1,7 +1,5 @@
-import os
 import tkinter as tk
 from tkinter import messagebox
-from PIL import Image, ImageTk
 
 class VentanaPrincipal(tk.Toplevel):
     def __init__(self, primerventana):
@@ -9,8 +7,19 @@ class VentanaPrincipal(tk.Toplevel):
         # Configuración basica de la ventana
         self.primerventana = primerventana
         self.title("Plataforma Super Usable Para Supermercados (PSUPS)")
-        self.geometry("500x500")
+        self.geometry("750x600")
         self.protocol("WM_DELETE_WINDOW", self.regresarVentanaInicio) #Si se cierra la ventana se muestra la primera y se oculta la segunda.
+
+        self.config(background="black")
+
+        frameDeInteraccion = tk.Frame(self, bg="gray90")
+        frameDeInteraccion.pack(expand=True,fill="both",padx=10,pady=10)
+        labelInformativo = tk.Label(frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
+        labelInformativo.pack(expand=True, fill = "both")
+
+    #frame = FieldFrame(frameDeInteraccion,tituloCriterios = "",criterios = ["nombre","apellido"], tituloValores = "",valores = None, habilitado = None)
+
+    
 
     def regresarVentanaInicio(self): # Oculta la segunda ventana ("Plataforma Super Usable Para Supermercados (PSUPS)") y muestra la primera ("Ventana de inicio")
         self.primerventana.deiconify()

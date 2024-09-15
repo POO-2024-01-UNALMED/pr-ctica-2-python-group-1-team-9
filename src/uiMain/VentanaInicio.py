@@ -1,7 +1,6 @@
 import os
 import tkinter as tk
 from PIL import Image, ImageTk
-from uiMain.VentanaPrincipal import VentanaPrincipal
 from baseDatos.Serializacion import Serializacion
 
 class VentanaInicio(tk.Tk):
