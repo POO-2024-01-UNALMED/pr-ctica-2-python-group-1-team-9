@@ -112,8 +112,8 @@ class Supermercado:
         return resultado
 
     def numeroUnidades(self, producto):
-        if self in producto.getSupermercados():
-            indice = producto.getSupermercados().index(self)
-            return producto.getUnidadesSupermercado()[indice]
+        for indice, supermercado in enumerate(producto.getSupermercados()):
+            if supermercado.getNombre() == self.getNombre():
+                return producto.getUnidadesSupermercado()[indice]
         return 0
     

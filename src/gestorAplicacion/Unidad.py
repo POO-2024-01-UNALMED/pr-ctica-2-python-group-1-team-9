@@ -44,12 +44,11 @@ class Unidad:
     @staticmethod
     def generarFechaVencimiento() -> str:
         fecha_actual = datetime.now()
-        fecha_maxima = fecha_actual + timedelta(days=60)
-        dias = (fecha_maxima - fecha_actual).days
-        dias_aleatorios = randint(0, dias)
+        # Generar un número aleatorio de días entre -8 y 60
+        dias_aleatorios = randint(-3, 45)
+        # Sumar esos días a la fecha actual
         fecha_aleatoria = fecha_actual + timedelta(days=dias_aleatorios)
-        fecha_aleatoria += timedelta(days=30)
-        return fecha_aleatoria.strftime('%d-%m-%Y')
+        return fecha_aleatoria.strftime('%Y-%m-%d')
 
     def diasParaVencimiento(self) -> int:
         hoy = datetime.now()
