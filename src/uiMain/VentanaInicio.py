@@ -324,7 +324,7 @@ class VentanaInicio():
         self.contador = (self.contador + 1) % 4
     
     def serializarAlCerrarLaVentana(self):
-        Serializacion.serializar()
+        #Serializacion.serializar()
         self.root.destroy()
         
 
