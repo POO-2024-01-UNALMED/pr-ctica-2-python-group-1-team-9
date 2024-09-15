@@ -4,17 +4,15 @@ from PIL import Image, ImageTk
 from uiMain.VentanaPrincipal import VentanaPrincipal
 from baseDatos.Serializacion import Serializacion
 
-class VentanaInicio():
-    def __init__(self, root):
-        # Configuración basica de la ventana
-        self.root = root
-        self.root.title("Ventana Principal de Inicio")
-        self.root.geometry("1000x550+284+72")
-        self.root.grid_propagate(False) # grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
-        self.root.protocol("WM_DELETE_WINDOW", self.serializarAlCerrarLaVentana)
+class VentanaInicio(tk.Tk):
 
-        self.segundaventana = None # Será la ventana Principal
-        self.VentanaPrincipal = None
+    def __init__(self):
+        super().__init__()
+        # Configuración basica de la ventana
+        self.title("Ventana Principal de Inicio")
+        self.geometry("1000x550+284+72")
+        self.grid_propagate(False) # grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
+        self.protocol("WM_DELETE_WINDOW", self.serializarAlCerrarLaVentana)
 
         self.hojasDeVida = [
             "Soy Jose Manuel, tengo 20 años, soy de Pueblorrico, un pequeño municipio de Antioquia, me gusta mucho salir a caminar y pasar tiempo en familia, este es mi primer semestre en la carrera (me traslade desde mecánica) y estoy entusiamado por aprender 😀",
@@ -62,11 +60,11 @@ class VentanaInicio():
         self.configurarGrid()
 
         # Evento para redimensionar imágenes
-        self.root.bind("<Configure>", lambda event: self.llamarATodas(event, (self.contador-1)))
+        self.bind("<Configure>", lambda event: self.llamarATodas(event, (self.contador-1)))
 
     def crearMenu(self): # Función para crear el menú
-        menuBar = tk.Menu(self.root)
-        self.root.config(menu=menuBar)
+        menuBar = tk.Menu(self)
+        self.config(menu=menuBar)
         menuInicio = tk.Menu(menuBar, tearoff=0)
         menuBar.add_cascade(label="Inicio", menu=menuInicio)
         menuInicio.add_command(label="Salir de la aplicación", command=self.serializarAlCerrarLaVentana)
@@ -84,7 +82,7 @@ class VentanaInicio():
 
     def crearFrames(self): # Se crean los dos frames grandes p1 y p2 y luego se llaman las funciones para los frames internos
         # Frame P1 (izquierda)
-        self.frameP1 = tk.Frame(self.root, bg="black")
+        self.frameP1 = tk.Frame(self, bg="black")
         self.frameP1.grid(row=0, column=0, padx=(10,5), pady=(10,7), sticky="nsew")
         self.frameP1.grid_propagate(False)
 
@@ -93,7 +91,7 @@ class VentanaInicio():
         self.frameP1.grid_rowconfigure(1, weight=2)
 
         # Frame P2 (derecha)
-        self.frameP2 = tk.Frame(self.root, bg="black")
+        self.frameP2 = tk.Frame(self, bg="black")
         self.frameP2.grid(row=0, column=1, padx=(5,10), pady=(10,7), sticky="nsew")
         self.frameP2.grid_propagate(False)
 
@@ -106,9 +104,9 @@ class VentanaInicio():
         self.crearFramesInternosP2()
 
     def configurarGrid(self): # Configuración para la disposicion de los frames p1 y p2
-        self.root.grid_rowconfigure(0, weight=1)
-        self.root.grid_columnconfigure(0, weight=1)
-        self.root.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
 
     def crearFramesInternosP1(self):
         # Frame p3 el que va dentro de p1 en la parte superior
@@ -138,7 +136,7 @@ class VentanaInicio():
 
         # Botón para ir al programa principal (va dentro de p4 en la parte inferior)
         self.botonP4 = tk.Button(self.frameP4, text="Programa principal",
-                                 font=("Arial"), bg="gray90", command=self.crearVentanaPrincipal )
+                                 font=("Arial"), bg="gray90")
         self.botonP4.grid(row=1, column=0, sticky="ew", ipady=15)
 
     def crearFramesInternosP2(self):
@@ -325,10 +323,4 @@ class VentanaInicio():
     
     def serializarAlCerrarLaVentana(self):
         #Serializacion.serializar()
-        self.root.destroy()
-        
-
-    def crearVentanaPrincipal(self):
-        self.root.withdraw()
-        self.segundaventana = tk.Toplevel(self.root)
-        self.VentanaPrincipal = VentanaPrincipal(self.segundaventana, self)
+        self.destroy()

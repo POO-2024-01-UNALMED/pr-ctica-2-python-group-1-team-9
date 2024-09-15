@@ -1,9 +1,9 @@
 from tkinter import Frame,Label,Entry
-from VentanaInicio import VentanaInicio
+from .VentanaInicio import VentanaInicio
 
 class FieldFrame(Frame):
-    def __init__(self, tituloCriterios, criterios, tituloValores, valores, habilitado):
-        super().__init__(VentanaInicio.segundaVentana)
+    def __init__(self, root, tituloCriterios, criterios, tituloValores, valores, habilitado):
+        super().__init__(root)
         self.tituloCriterios = tituloCriterios
         self.criterios = criterios
         self.tituloValores = tituloValores
@@ -11,8 +11,10 @@ class FieldFrame(Frame):
         self.habilidato = habilitado
 
         self.diccionario = {}
+        self.config(bg="red")
+        self.pack(padx=10, pady=10, fill="both", expand=True)
 
-        for i, criterio in criterios():
+        '''for i, criterio in criterios():
             etiqueta = Label(self, text=criterio)
             entrada = Entry(self)
             
@@ -22,11 +24,12 @@ class FieldFrame(Frame):
             
             # Guardamos las entradas en el diccionario
             self.diccionario[criterio] = entrada
+        self.pack()
 
     
     def getValue(self, criterio):
         return self.valores[criterio]
-        
+ '''       
 """crea un nuevo objeto de tipo FieldFrame
 @arg tituloCriterios titulo para la columna "Criterio"
 @arg criterios array con los nombres de los criterios
