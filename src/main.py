@@ -15,31 +15,24 @@ from uiMain.FieldFrame import FieldFrame
 import tkinter as tk
 
 def primerFuncion():
-    mostrarFucionalidades("Creación de orden de compra", "Seleccione el supermercado que hará la venta")
+    mostrarFucionalidades("Creación de orden de compra", "Creación de nueva orden de compra.")
     preguntarSupermercado()
+    preguntarEmpleado()
+    preguntarCliente()
+
+def segundaFuncion():
+    mostrarFucionalidades("Administrar inventario", "Ingrese el número de días que se usará como criterio para verificar la fecha de vencimiento de los productos disponibles.")
+    preguntarSupermercado()
+    preguntarEmpleado()
+
+def terceraFuncion():
+    mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
+    preguntarSupermercado()
+    preguntarEmpleado()
 
 def MostrarVentanaPrincipal(primerventana):
     primerventana.withdraw()
     segundaventana.deiconify()
-
-def crearMenu(): # Función para crear el menú
-    menuBar = tk.Menu(segundaventana)
-    segundaventana.config(menu=menuBar)
-
-    menuArchivo = tk.Menu(menuBar, tearoff=0)
-    menuBar.add_cascade(label="Archivo", menu=menuArchivo) 
-    menuArchivo.add_command(label="Aplicación", command= segundaventana.ventanaDeDialogoInfoBasica)
-    menuArchivo.add_command(label="Salir", command= segundaventana.regresarVentanaInicio)
-
-    menuProcesosYConsultas = tk.Menu(menuBar,tearoff=0)
-    menuBar.add_cascade(label="Procesos y Consultas", menu=menuProcesosYConsultas)
-    menuProcesosYConsultas.add_command(label="Administar inventario")
-    menuProcesosYConsultas.add_command(label="Generar Orden", command=primerFuncion)
-    menuProcesosYConsultas.add_command(label="Intercambio de Productos (sin implementar)")
-
-    menuAyuda = tk.Menu(menuBar,tearoff=0)
-    menuBar.add_cascade(label="Ayuda", menu=menuAyuda)
-    menuAyuda.add_command(label="Acerda de:", command=segundaventana.ventanaDeDialogoAcercaDe)
 
 def mostrarFucionalidades(NombreProceso, DescripcionProceso):
     
@@ -47,20 +40,25 @@ def mostrarFucionalidades(NombreProceso, DescripcionProceso):
     segundaventana.frameDeInteraccion.grid_rowconfigure(2, weight=1)
     segundaventana.frameDeInteraccion.grid_columnconfigure(0, weight=1)
 
-    frameNombreProceso = tk.Frame(segundaventana.frameDeInteraccion, bg="black")
-    frameNombreProceso.grid(row=0, column=0, pady=(5,2.5), padx=5, ipady=2)
-    labelNombreProceso = tk.Label(frameNombreProceso, text=NombreProceso, font=("Arial"), bg="white")
-    labelNombreProceso.pack(padx=5, pady=5, expand= True)
-
-    frameDescripcionProceso = tk.Frame(segundaventana.frameDeInteraccion, bg="black")
-    frameDescripcionProceso.grid(row=1, column=0, sticky="ew", pady=(2.5,2.5), padx=5, ipady=4)
-    labelDescripcionProceso = tk.Label(frameDescripcionProceso, text=DescripcionProceso ,font=("Arial"), bg="white")
-    labelDescripcionProceso.pack(padx=5, pady=5, expand= True, fill="x")
-
-    frameProceso = tk.Frame(segundaventana.frameDeInteraccion, bg="green")
-    frameProceso.grid(row=2, column=0, sticky="snew", pady=(2.5,5), padx=5)
+    segundaventana.frameNombreProceso.grid(row=0, column=0, pady=(5,2.5), padx=5, ipady=2)
+    segundaventana.labelNombreProceso.config(text=NombreProceso)
+    segundaventana.labelNombreProceso.pack(padx=5, pady=5, expand= True)
+ 
+    segundaventana.frameDescripcionProceso.grid(row=1, column=0, sticky="ew", pady=(2.5,2.5), padx=5, ipady=4)
+    segundaventana.labelDescripcionProceso.config(text=DescripcionProceso)
+    segundaventana.labelDescripcionProceso.pack(padx=5, pady=5, expand= True, fill="x")
+    
+    segundaventana.frameProceso.grid(row=2, column=0, sticky="snew", pady=(2.5,5), padx=5)
 
 def preguntarSupermercado():
+    #frameDescripcionProceso.config
+    pass
+
+def preguntarEmpleado():
+    #frameDescripcionProceso.config
+    pass
+
+def preguntarCliente():
     #frameDescripcionProceso.config
     pass
 
@@ -71,5 +69,17 @@ if __name__ == "__main__":
     
     segundaventana = VentanaPrincipal(primerventana)
     segundaventana.withdraw()
-    crearMenu()
+
+    segundaventana.menuBar.add_cascade(label="Archivo", menu=segundaventana.menuArchivo) 
+    segundaventana.menuArchivo.add_command(label="Aplicación", command= segundaventana.ventanaDeDialogoInfoBasica)
+    segundaventana.menuArchivo.add_command(label="Salir", command= segundaventana.regresarVentanaInicio)
+
+    segundaventana.menuBar.add_cascade(label="Procesos y Consultas", menu=segundaventana.menuProcesosYConsultas)
+    segundaventana.menuProcesosYConsultas.add_command(label="Administar inventario", command=segundaFuncion)
+    segundaventana.menuProcesosYConsultas.add_command(label="Generar Orden", command=primerFuncion)
+    segundaventana.menuProcesosYConsultas.add_command(label="Intercambio de Productos", command=terceraFuncion)
+
+    segundaventana.menuBar.add_cascade(label="Ayuda", menu=segundaventana.menuAyuda)
+    segundaventana.menuAyuda.add_command(label="Acerda de:", command=segundaventana.ventanaDeDialogoAcercaDe)
+
     primerventana.mainloop()
