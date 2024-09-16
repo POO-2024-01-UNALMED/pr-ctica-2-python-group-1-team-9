@@ -33,7 +33,7 @@ def primerFuncion():
                 empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
 
                 def onSelect():
-                    if seleccion.get() == 1:  
+                    if seleccion.get() == 1:  # Cliente Existente
                         def cliSelect(event):
                             clisel = next((clie for clie in Persona.getPersonas() if clie.getNombre() == combocli.get()), None)
 
@@ -52,21 +52,27 @@ def primerFuncion():
                         tk.Button(frame2, text="Crear Orden", command=crearOrden).grid(row=2, column=0, pady=10, padx=10, columnspan=2)
                     
                     elif seleccion.get() == 2:  # Cliente Nuevo
+                        def validar_entrada(nombre, cedula):
+                            if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
+                                raise ValueError("El nombre solo puede contener letras y espacios.")
+                            if not re.match("^\d+$", cedula):
+                                raise ValueError("La cédula solo puede contener números.")
+                            if len(cedula) > 15:
+                                raise ValueError("La cédula no puede tener más de 15 caracteres.")
+                            return True
+
                         def crearCliente():
                             nombre = entryNombre.get()
                             cedula = entryCedula.get()
 
-                            if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
-                                messagebox.showwarning("Advertencia", "El nombre solo puede contener letras y espacios.")
-                                return
-
-                            if nombre and cedula:
-                                nuevo_cliente = Cliente(nombre, cedula, supsel)  
-                                Persona.agregarPersona(nuevo_cliente)  
-                                messagebox.showinfo("Éxito", "Cliente creado y agregado a la base de datos.")
-                                combocli.set(nombre)  
-                            else:
-                                messagebox.showwarning("Advertencia", "Todos los campos deben ser llenados.")
+                            try:
+                                if validar_entrada(nombre, cedula):
+                                    nuevo_cliente = Cliente(nombre, cedula, supsel)  
+                                    Persona.agregarPersona(nuevo_cliente)  
+                                    messagebox.showinfo("Éxito", "Cliente creado y agregado a la base de datos.")
+                                    combocli.set(nombre)  
+                            except ValueError as e:
+                                messagebox.showwarning("Advertencia", f"Error al crear el cliente: {e}")
 
                         frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#f4f4f4")
                         frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")

@@ -6,11 +6,6 @@ class Cliente(Persona):
         self._ordenes = []
         self._puntos = 0
 
-    def __init__(self, nombre, cedula, Supermercados):
-        super.__init__(nombre, cedula)
-        self._ordenes = []
-        self._puntos= 0 
-
     def informacion(self):
         return f"{self.nombre} con cédula {self.cedula}"
 
