@@ -18,250 +18,237 @@ import re
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+class Aplicacion():
 
-# Función para aplicar estilos a los widgets
-def aplicar_estilos(widget):
-    widget.config(font=("Arial", 12), background="#f4f4f4", foreground="#000000")
-    if isinstance(widget, tk.Label):
-        widget.config(bg="#f4f4f4")
-    elif isinstance(widget, ttk.Combobox):
-        widget.config(style="TCombobox")
-    elif isinstance(widget, tk.Button):
-        widget.config(bg="#cccccc", activebackground="#aaaaaa")
+    def __init__(self):
+        self.supsel = None
+        self.empsel = None
+        self.clisel = None
+
+        self.primerventana = VentanaInicio()
+        self.segundaventana = VentanaPrincipal(self.primerventana)
+
+    # Función para aplicar estilos a los widgets
+    def aplicar_estilos(widget):
+        widget.config(font=("Arial", 12), background="#f4f4f4", foreground="#000000")
+        if isinstance(widget, tk.Label):
+            widget.config(bg="#f4f4f4")
+        elif isinstance(widget, ttk.Combobox):
+            widget.config(style="TCombobox")
+        elif isinstance(widget, tk.Button):
+            widget.config(bg="#cccccc", activebackground="#aaaaaa")
 
 
-def primerFuncion():
-    mostrarFucionalidades("Orden de compra", "Creación de nueva orden de compra. Seleccione el supermercado donde se realizará la compra, seguido del empleado y del cliente.")
-    segundaventana.limpiarFrame(segundaventana.frameProceso)
+    def primerFuncion(self):
+        self.mostrarFucionalidades("Orden de compra", "Creación de nueva orden de compra. Seleccione el supermercado donde se realizará la compra, seguido del empleado y del cliente.")
+        self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
 
-    def supSelect(event):
-        supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
-        if supsel:
-            listaemp = [persona.getNombre() for persona in Persona.getPersonas()
-                        if persona.getCargo() != "Cliente" and persona.getSupermercado().getNombre() == supsel.getNombre()]
+        def supSelect(event):
+            self.supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+            listaemp = [persona.getNombre() for persona in Persona.getPersonas() if persona.getCargo() != "Cliente" if persona.getSupermercado().getNombre() == self.supsel.getNombre()]
+            comboemp.config(values=listaemp)
+            comboemp.set("")
 
-            def empSelect(event):
-                empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
+        def empSelect(event):
+            self.empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
 
-                def onSelect():
-                    if seleccion.get() == 1:  # Cliente Existente
-                        def cliSelect(event):
-                            clisel = next((clie for clie in Persona.getPersonas() if clie.getNombre() == combocli.get()), None)
+        def crearOrden():
+            print(str(type(self.supsel))+str(type(self.empsel))+str(type(self.clisel)))
+            if self.supsel and self.empsel and self.clisel:
+                orden = Orden(self.supsel, self.empsel, self.clisel)
+                print("Orden Creada")
+            else:
+                print("Error, faltan datos")
+                print(str(type(self.supsel))+str(type(self.empsel))+str(type(self.clisel)))
 
-                        def crearOrden():
-                            if supsel and empsel and clisel:
-                                orden = Orden(supsel, empsel, clisel)
-                                print("Orden Creada")
+        def onSelect():
+            if seleccion.get() == 1:  # Cliente Existente
+                def cliSelect(event):
+                    self.clisel = next((clie for clie in Persona.getPersonas() if clie.getNombre() == combocli.get()), None)
+                
+                tk.Label(frame2, text="Cliente").grid(row=1, column=0, pady=5, padx=5, sticky="e")
+                combocli = ttk.Combobox(frame2, values=listacli, state="readonly")
+                combocli.bind("<<ComboboxSelected>>", cliSelect)
+                combocli.grid(row=1, column=1, pady=5, padx=5, sticky="w")
+                tk.Button(frame2, text="Crear Orden", command=crearOrden).grid(row=2, column=0, pady=10, padx=10, columnspan=2)
+
+            elif seleccion.get() == 2:  # Cliente Nuevo
+                def validar_entrada(nombre, cedula):
+                    if not nombre or not cedula:
+                        raise ValueError(ExceptionSugerida2())
+                    if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
+                        raise ValueError(ExceptionSugerida1())
+                    if not re.match("^\d+$", cedula):
+                        raise ValueError(ExceptionSugerida1())
+                    if len(cedula) > 15:
+                        raise ValueError(ExceptionInventada1())
+                    return True
+
+                def crearCliente():
+                    nombre = entryNombre.get()
+                    cedula = entryCedula.get()
+
+                    try:
+                        if validar_entrada(nombre, cedula):
+                            nuevo_cliente = Cliente(nombre, cedula, self.supsel)
+                            Persona.agregarPersona(nuevo_cliente)
+                            messagebox.showinfo("Éxito", "Cliente creado y agregado a la base de datos.")
+                            combocli.set(nombre)
+
+                    except ValueError as e:
+                        messagebox.showwarning("Advertencia", f"Error al crear el cliente: {e}")
+
+                            #frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
+                            #frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
+
+                    tk.Label(frame2, text="Nombre").grid(row=0, column=0, pady=5, padx=5, sticky="e")
+                    entryNombre = tk.Entry(frame2)
+                    entryNombre.grid(row=0, column=1, pady=5, padx=5, sticky="w")
+
+                    tk.Label(frame2, text="Cédula").grid(row=1, column=0, pady=5, padx=5, sticky="e")
+                    entryCedula = tk.Entry(frame2)
+                    entryCedula.grid(row=1, column=1, pady=5, padx=5, sticky="w")
+
+                    tk.Button(frame2, text="Crear Cliente", command=crearCliente).grid(row=2, column=0, pady=10, padx=10, columnspan=2)
+                    tk.Button(frame2, text="Crear Orden", command=crearOrden).grid(row=3, column=0, pady=10, padx=10, columnspan=2)
+
+
+        frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
+        frame1.pack(expand=True, fill="both", padx=10, pady=10)
+        frame1.grid_columnconfigure(0, weight=1)
+        frame1.grid_columnconfigure(1, weight=1)
+
+        listasup = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
+        listacli = [persona.getNombre() for persona in Persona.getPersonas() if persona.getCargo() == "Cliente"]
+
+        tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
+        combosup = ttk.Combobox(frame1, values=listasup, state="readonly")
+        combosup.bind("<<ComboboxSelected>>", supSelect)
+        combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
+
+        tk.Label(frame1, text="Empleado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
+        empvariable = tk.StringVar()
+        comboemp = ttk.Combobox(frame1,textvariable=empvariable, state="readonly")
+        comboemp.bind("<<ComboboxSelected>>", empSelect)
+        comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
+
+        frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
+        frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
+        seleccion = tk.IntVar()
+        tk.Radiobutton(frame2, text="Cliente Existente", variable=seleccion, value=1, command=onSelect).grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        tk.Radiobutton(frame2, text="Cliente Nuevo", variable=seleccion, value=2, command=onSelect).grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+        seleccion.set(0)
+
+    def segundaFuncion(self):
+        self.mostrarFucionalidades("Administrar inventario", "Administración de inventario. Seleccione el supermercado donde se realizarán las modificaciones")
+        self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
+
+        def supSelect(event):
+            supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+
+            if supsel:
+                listaemp = [persona.getNombre() for persona in Persona.getPersonas()
+                            if persona.getCargo() != "Cliente" and persona.getSupermercado().getNombre() == supsel.getNombre()]
+
+                def empSelect(event):
+                    empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
+
+                    if empsel:
+                        primerFieldFrame = FieldFrame(self.segundaventana.frameProceso, tituloCriterios="Parametro de busqueda", criterios=["Días"], 
+                                                    tituloValores="Cantidad", valores=None, habilitado=None)
+                        primerFieldFrame.pack()
+
+                        def aceptar():
+                            diasIngresados = primerFieldFrame.entradas[0].get()
+                            if not diasIngresados:
+                                messagebox.showwarning("Advertencia", ExceptionSugerida2())
+                            elif not diasIngresados.isdigit():
+                                messagebox.showwarning("Advertencia", ExceptionSugerida1())
                             else:
-                                print("Error, faltan datos")
+                                diasIngresados = int(diasIngresados)
+                                bodegas = supsel.getBodegas()
+                                unidades = [producto for bodega in bodegas for producto in bodega.getProductos()]
+                                avencer = [unidad for unidad in unidades if unidad.diasParaVencimiento() <= diasIngresados]
+                                avencer.sort(key=lambda u: u.diasParaVencimiento())
 
-                        listacli = [persona.getNombre() for persona in Persona.getPersonas() if persona.getCargo() == "Cliente"]
-                        tk.Label(frame2, text="Cliente").grid(row=1, column=0, pady=5, padx=5, sticky="e")
-                        combocli = ttk.Combobox(frame2, values=listacli, state="readonly")
-                        combocli.bind("<<ComboboxSelected>>", cliSelect)
-                        combocli.grid(row=1, column=1, pady=5, padx=5, sticky="w")
-                        tk.Button(frame2, text="Crear Orden", command=crearOrden).grid(row=2, column=0, pady=10, padx=10, columnspan=2)
+                        primerFieldFrame.botonAceptar.config(command=aceptar)
 
-                    elif seleccion.get() == 2:  # Cliente Nuevo
-                        def validar_entrada(nombre, cedula):
-                            if not nombre or not cedula:
-                                raise ValueError(ExceptionSugerida2())
-                            if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
-                                raise ValueError(ExceptionSugerida1())
-                            if not re.match("^\d+$", cedula):
-                                raise ValueError(ExceptionSugerida1())
-                            if len(cedula) > 15:
-                                raise ValueError(ExceptionInventada1())
-                            return True
+                tk.Label(frame1, text="Empleado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
+                comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
+                comboemp.bind("<<ComboboxSelected>>", empSelect)
+                comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
 
-                        def crearCliente():
-                            nombre = entryNombre.get()
-                            cedula = entryCedula.get()
+        frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
+        frame1.pack(expand=True, fill="both", padx=10, pady=10)
+        frame1.grid_columnconfigure(0, weight=1)
+        frame1.grid_columnconfigure(1, weight=1)
 
-                            try:
-                                if validar_entrada(nombre, cedula):
-                                    nuevo_cliente = Cliente(nombre, cedula, supsel)
-                                    Persona.agregarPersona(nuevo_cliente)
-                                    messagebox.showinfo("Éxito", "Cliente creado y agregado a la base de datos.")
-                                    combocli.set(nombre)
-
-                            except ValueError as e:
-                                messagebox.showwarning("Advertencia", f"Error al crear el cliente: {e}")
-
-                        frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
-                        frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-                        tk.Label(frame2, text="Nombre").grid(row=0, column=0, pady=5, padx=5, sticky="e")
-                        entryNombre = tk.Entry(frame2)
-                        entryNombre.grid(row=0, column=1, pady=5, padx=5, sticky="w")
-
-                        tk.Label(frame2, text="Cédula").grid(row=1, column=0, pady=5, padx=5, sticky="e")
-                        entryCedula = tk.Entry(frame2)
-                        entryCedula.grid(row=1, column=1, pady=5, padx=5, sticky="w")
-
-                        tk.Button(frame2, text="Crear Cliente", command=crearCliente).grid(row=2, column=0, pady=10, padx=10, columnspan=2)
-                        tk.Button(frame2, text="Crear Orden", command=crearOrden).grid(row=3, column=0, pady=10, padx=10, columnspan=2)
-
-                frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
-                frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
-                seleccion = tk.IntVar()
-                tk.Radiobutton(frame2, text="Cliente Existente", variable=seleccion, value=1, command=onSelect).grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
-                tk.Radiobutton(frame2, text="Cliente Nuevo", variable=seleccion, value=2, command=onSelect).grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
-                seleccion.set(0)
-
-            tk.Label(frame1, text="Empleado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
-            comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
-            comboemp.bind("<<ComboboxSelected>>", empSelect)
-            comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
-
-    frame1 = tk.Frame(segundaventana.frameProceso, bg="#ffffff")
-    frame1.pack(expand=True, fill="both", padx=10, pady=10)
-    frame1.grid_columnconfigure(0, weight=1)
-    frame1.grid_columnconfigure(1, weight=1)
-
-    lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
-    tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
-    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
-    combosup.bind("<<ComboboxSelected>>", supSelect)
-    combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
+        lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
+        tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
+        combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+        combosup.bind("<<ComboboxSelected>>", supSelect)
+        combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
 
 
-def segundaFuncion():
-    mostrarFucionalidades("Administrar inventario", "Administración de inventario. Seleccione el supermercado donde se realizarán las modificaciones")
-    segundaventana.limpiarFrame(segundaventana.frameProceso)
+    def terceraFuncion(self):
+        self.mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
+        self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
 
-    def supSelect(event):
-        supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+        def supSelect(event):
+            supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
 
-        if supsel:
-            listaemp = [persona.getNombre() for persona in Persona.getPersonas()
-                        if persona.getCargo() != "Cliente" and persona.getSupermercado().getNombre() == supsel.getNombre()]
+        frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
+        frame1.pack(expand=True, fill="both", padx=10, pady=10)
+        frame1.grid_columnconfigure(0, weight=1)
+        frame1.grid_columnconfigure(1, weight=1)
 
-            def empSelect(event):
-                empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
+        lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
+        tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
+        combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+        combosup.bind("<<ComboboxSelected>>", supSelect)
+        combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
 
-                if empsel:
-                    primerFieldFrame = FieldFrame(segundaventana.frameProceso, tituloCriterios="Parametro de busqueda", criterios=["Días"], 
-                                                tituloValores="Cantidad", valores=None, habilitado=None)
-                    primerFieldFrame.pack()
-
-                    def aceptar():
-                        diasIngresados = primerFieldFrame.entradas[0].get()
-                        if not diasIngresados:
-                            messagebox.showwarning("Advertencia", ExceptionSugerida2())
-                        elif not diasIngresados.isdigit():
-                            messagebox.showwarning("Advertencia", ExceptionSugerida1())
-                        else:
-                            diasIngresados = int(diasIngresados)
-                            bodegas = supsel.getBodegas()
-                            unidades = [producto for bodega in bodegas for producto in bodega.getProductos()]
-                            avencer = [unidad for unidad in unidades if unidad.diasParaVencimiento() <= diasIngresados]
-                            avencer.sort(key=lambda u: u.diasParaVencimiento())
-
-                    primerFieldFrame.botonAceptar.config(command=aceptar)
-
-            tk.Label(frame1, text="Empleado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
-            comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
-            comboemp.bind("<<ComboboxSelected>>", empSelect)
-            comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
-
-    frame1 = tk.Frame(segundaventana.frameProceso, bg="#ffffff")
-    frame1.pack(expand=True, fill="both", padx=10, pady=10)
-    frame1.grid_columnconfigure(0, weight=1)
-    frame1.grid_columnconfigure(1, weight=1)
-
-    lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
-    tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
-    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
-    combosup.bind("<<ComboboxSelected>>", supSelect)
-    combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
+    def MostrarVentanaPrincipal(self, primerventana, segundaventana):
+        primerventana.withdraw()
+        segundaventana.deiconify()
 
 
-def terceraFuncion():
-    mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
-    segundaventana.limpiarFrame(segundaventana.frameProceso)
+    def mostrarFucionalidades(self, NombreProceso, DescripcionProceso):
+        self.segundaventana.labelInformativo.pack_forget()
+        self.segundaventana.frameDeInteraccion.grid_rowconfigure(2, weight=1)
+        self.segundaventana.frameDeInteraccion.grid_columnconfigure(0, weight=1)
 
-    def supSelect(event):
-        supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+        self.segundaventana.frameNombreProceso.grid(row=0, column=0, pady=(5, 2.5), padx=5, ipady=2)
+        self.segundaventana.labelNombreProceso.config(text=NombreProceso)
+        self.segundaventana.labelNombreProceso.pack(padx=5, pady=5)
 
-    frame1 = tk.Frame(segundaventana.frameProceso, bg="#ffffff")
-    frame1.pack(expand=True, fill="both", padx=10, pady=10)
-    frame1.grid_columnconfigure(0, weight=1)
-    frame1.grid_columnconfigure(1, weight=1)
+        self.segundaventana.frameDescripcionProceso.grid(row=1, column=0, sticky="ew", pady=(2.5, 2.5), padx=5, ipady=4)
+        self.segundaventana.labelDescripcionProceso.config(text=DescripcionProceso)
+        self.segundaventana.labelDescripcionProceso.pack(padx=5, pady=5, expand=True, fill="x")
 
-    lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
-    tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
-    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
-    combosup.bind("<<ComboboxSelected>>", supSelect)
-    combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
+        self.segundaventana.frameProceso.grid(row=2, column=0, sticky="n", pady=(2.5, 5), padx=5)
 
 
-def MostrarVentanaPrincipal(primerventana):
-    primerventana.withdraw()
-    segundaventana.deiconify()
+    def configurarBoton(self, ventana, ventana2):
+        ventana.botonP4.config(command=lambda: self.MostrarVentanaPrincipal(ventana, ventana2))
 
 
-def mostrarFucionalidades(NombreProceso, DescripcionProceso):
-    segundaventana.labelInformativo.pack_forget()
-    segundaventana.frameDeInteraccion.grid_rowconfigure(2, weight=1)
-    segundaventana.frameDeInteraccion.grid_columnconfigure(0, weight=1)
+class main():
+    if __name__ == "__main__":
+        Serializacion.deserializar()
+        aplicacion = Aplicacion()
+        aplicacion.segundaventana.withdraw()
 
-    segundaventana.frameNombreProceso.grid(row=0, column=0, pady=(5, 2.5), padx=5, ipady=2)
-    segundaventana.labelNombreProceso.config(text=NombreProceso)
-    segundaventana.labelNombreProceso.pack(padx=5, pady=5)
+        aplicacion.segundaventana.menuBar.add_cascade(label="Archivo", menu=aplicacion.segundaventana.menuArchivo)
+        aplicacion.segundaventana.menuArchivo.add_command(label="Aplicación", command=aplicacion.segundaventana.ventanaDeDialogoInfoBasica)
+        aplicacion.segundaventana.menuArchivo.add_command(label="Salir", command=aplicacion.segundaventana.regresarVentanaInicio)
 
-    segundaventana.frameDescripcionProceso.grid(row=1, column=0, sticky="ew", pady=(2.5, 2.5), padx=5, ipady=4)
-    segundaventana.labelDescripcionProceso.config(text=DescripcionProceso)
-    segundaventana.labelDescripcionProceso.pack(padx=5, pady=5, expand=True, fill="x")
+        aplicacion.segundaventana.menuBar.add_cascade(label="Procesos y Consultas", menu=aplicacion.segundaventana.menuProcesosYConsultas)
+        aplicacion.segundaventana.menuProcesosYConsultas.add_command(label="Administrar inventario", command=aplicacion.segundaFuncion)
+        aplicacion.segundaventana.menuProcesosYConsultas.add_command(label="Generar Orden", command=aplicacion.primerFuncion)
+        aplicacion.segundaventana.menuProcesosYConsultas.add_command(label="Intercambio de Productos", command=aplicacion.terceraFuncion)
 
-    segundaventana.frameProceso.grid(row=2, column=0, sticky="n", pady=(2.5, 5), padx=5)
-
-
-def preguntarSupermercado():
-    def onComboboxSelect(event):
-        for sup in Supermercado.getSupermercados():
-            if sup.getNombre() == combosup.get():
-                return sup
-
-    frame1 = tk.Frame(segundaventana.frameProceso, bg="#ffffff")
-    frame1.pack(expand=True, fill="both", padx=10, pady=10)
-    frame1.grid_columnconfigure(0, weight=1)
-    frame1.grid_columnconfigure(1, weight=1)
-    
-    tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
-    lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
-    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
-    combosup.bind("<<ComboboxSelected>>", onComboboxSelect)
-    combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
-
-
-def preguntarEmpleado():
-    pass
-
-
-def preguntarCliente():
-    pass
-
-
-if __name__ == "__main__":
-    Serializacion.deserializar()
-
-    primerventana = VentanaInicio()
-    primerventana.botonP4.config(command=lambda: MostrarVentanaPrincipal(primerventana))
-    
-    segundaventana = VentanaPrincipal(primerventana)
-    segundaventana.withdraw()
-
-    segundaventana.menuBar.add_cascade(label="Archivo", menu=segundaventana.menuArchivo)
-    segundaventana.menuArchivo.add_command(label="Aplicación", command=segundaventana.ventanaDeDialogoInfoBasica)
-    segundaventana.menuArchivo.add_command(label="Salir", command=segundaventana.regresarVentanaInicio)
-
-    segundaventana.menuBar.add_cascade(label="Procesos y Consultas", menu=segundaventana.menuProcesosYConsultas)
-    segundaventana.menuProcesosYConsultas.add_command(label="Administrar inventario", command=segundaFuncion)
-    segundaventana.menuProcesosYConsultas.add_command(label="Generar Orden", command=primerFuncion)
-    segundaventana.menuProcesosYConsultas.add_command(label="Intercambio de Productos", command=terceraFuncion)
-
-    segundaventana.menuBar.add_cascade(label="Ayuda", menu=segundaventana.menuAyuda)
-    segundaventana.menuAyuda.add_command(label="Acerca de:", command=segundaventana.ventanaDeDialogoAcercaDe)
-
-    primerventana.mainloop()
+        aplicacion.segundaventana.menuBar.add_cascade(label="Ayuda", menu=aplicacion.segundaventana.menuAyuda)
+        aplicacion.segundaventana.menuAyuda.add_command(label="Acerca de:", command=aplicacion.segundaventana.ventanaDeDialogoAcercaDe)
+        aplicacion.configurarBoton(aplicacion.primerventana, aplicacion.segundaventana)
+        aplicacion.primerventana.mainloop()
