@@ -247,6 +247,21 @@ class Aplicacion():
                     for prod in Producto.getListaProductos():
                         i = sum(1 for bodega in supermercado1.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == prod.getNombre())
                         listbox1.insert("end", f"{prod.getNombre()} // {i} unidades")
+                    
+                    # Agregar el frame para el botón de flecha
+                    frame_flechas = tk.Frame(frame_productos)
+                    frame_flechas.pack(side="left", padx=10, pady=10)
+
+                    # Botón de flecha hacia la derecha
+                    boton_derecha = tk.Button(frame_flechas, text="-->", command=lambda: mover_producto(listbox1, listbox2))
+                    boton_derecha.pack(pady=5)
+
+                    # Botón de flecha hacia la izquierda
+                    boton_izquierda = tk.Button(frame_flechas, text="<--", command=lambda: mover_producto(listbox2, listbox1))
+                    boton_izquierda.pack(pady=5)
+
+                    frame_supermercado2 = tk.Frame(frame_productos)
+                    frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
 
                     frame_supermercado2 = tk.Frame(frame_productos)
                     frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
@@ -283,7 +298,20 @@ class Aplicacion():
             
             except ExceptionInventada3 as e:
                 messagebox.showwarning("Advertencia", str(e))
+                
 
+        def mover_producto(source_listbox, target_listbox):
+            selected_item = source_listbox.curselection()
+            
+            try:
+                if not selected_item:
+                    raise ExceptionInventada3()
+            except ExceptionInventada3 as e:
+                messagebox.showwarning("Advertencia", str(e))
+
+            producto = source_listbox.get(selected_item)
+            target_listbox.insert("end", producto)
+            source_listbox.delete(selected_item)
 
 
 
