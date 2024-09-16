@@ -33,18 +33,20 @@ def primerFuncion():
                         listaemp.append(persona.getNombre())
 
             #Lista Empleados
+            def empSelect(event):
+                for persona in Persona.getPersonas():
+                        if persona.getNombre() == comboemp.get():
+                                empsel = persona
             labelemp = tk.Label(frame1, text="Empleado", font=("Arial"))
             labelemp.grid(row=1, column=0, pady=5, padx=5, sticky="e")
             comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
             comboemp.bind("<<ComboboxSelected>>",empSelect)
             comboemp.grid(row=1, column=1, pady=5, padx=5,sticky="w")
 
-    def empSelect(event):
-        for emp in Persona.getPersonas():
-            if emp.getSupermercado() == combosup.get():
-                return sup
+        
     
     supsel = ""
+    empsel = ""
     frame1 = tk.Frame(segundaventana.frameProceso)
     frame1.pack(expand=True,fill="both",padx=10,pady=10)
     frame1.grid_columnconfigure(0, weight=1)
