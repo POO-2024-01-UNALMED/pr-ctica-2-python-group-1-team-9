@@ -15,13 +15,51 @@ from uiMain.FieldFrame import FieldFrame
 import tkinter as tk
 from tkinter import ttk
 
+
 def primerFuncion():
     mostrarFucionalidades("Orden de compra", "Creación de nueva orden de compra. Seleccione el supermercado donde se realizará la compra, seguido del empleado y del cliente.")
     segundaventana.limpiarFrame(segundaventana.frameProceso)
-    supermercado1 = preguntarSupermercado()
-    print(supermercado1.getNombre())
-    preguntarEmpleado()
-    preguntarCliente()
+
+    def supSelect(event):
+        for sup in Supermercado.getSupermercados():
+            if sup.getNombre() == combosup.get():
+                supsel = sup
+        
+        if supsel != "":
+            listaemp = []
+            for persona in Persona.getPersonas():
+                if persona.getCargo() != "Cliente":
+                    if persona.getSupermercado().getNombre() == supsel.getNombre():
+                        listaemp.append(persona.getNombre())
+
+            #Lista Empleados
+            labelemp = tk.Label(frame1, text="Empleado", font=("Arial"))
+            labelemp.grid(row=1, column=0, pady=5, padx=5, sticky="e")
+            comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
+            comboemp.bind("<<ComboboxSelected>>",empSelect)
+            comboemp.grid(row=1, column=1, pady=5, padx=5,sticky="w")
+
+    def empSelect(event):
+        for emp in Persona.getPersonas():
+            if emp.getSupermercado() == combosup.get():
+                return sup
+    
+    supsel = ""
+    frame1 = tk.Frame(segundaventana.frameProceso)
+    frame1.pack(expand=True,fill="both",padx=10,pady=10)
+    frame1.grid_columnconfigure(0, weight=1)
+    frame1.grid_columnconfigure(1, weight=1)
+
+    # Lista Supermercados
+    labelsup = tk.Label(frame1, text="Supermercado", font=("Arial"))
+    labelsup.grid(row=0, column=0, pady=5, padx=5, sticky="e")
+    lista = []
+    for supermercado in Supermercado.getSupermercados():
+        lista.append(supermercado.getNombre())
+    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+    combosup.bind("<<ComboboxSelected>>",supSelect)
+    combosup.grid(row=0, column=1, pady=5, padx=5,sticky="w")
+
 
 def segundaFuncion():
     mostrarFucionalidades("Administrar inventario", "Ingrese el número de días que se usará como criterio para verificar la fecha de vencimiento de los productos disponibles.")
@@ -56,7 +94,12 @@ def mostrarFucionalidades(NombreProceso, DescripcionProceso):
     segundaventana.frameProceso.grid(row=2, column=0, sticky="n", pady=(2.5,5), padx=5)
 
 def preguntarSupermercado():
-    supermercado = tk.StringVar()
+
+    def onComboboxSelect(event):
+        for sup in Supermercado.getSupermercados():
+            if sup.getNombre() == combosup.get():
+                return sup
+    
     frame1 = tk.Frame(segundaventana.frameProceso)
     frame1.pack(expand=True,fill="both",padx=10,pady=10)
     frame1.grid_columnconfigure(0, weight=1)
@@ -66,12 +109,12 @@ def preguntarSupermercado():
     lista = []
     for supermercado in Supermercado.getSupermercados():
         lista.append(supermercado.getNombre())
-    combosup = ttk.Combobox(frame1, values=lista, state="readonly", textvariable=supermercado)
+    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+    combosup.bind("<<ComboboxSelected>>",onComboboxSelect)
     combosup.grid(row=0, column=1, pady=5, padx=5,sticky="w")
     
 
 def preguntarEmpleado():
-    #frameDescripcionProceso.config
     pass
 
 def preguntarCliente():
