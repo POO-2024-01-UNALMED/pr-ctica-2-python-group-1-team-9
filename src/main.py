@@ -12,6 +12,7 @@ from baseDatos.Serializacion import Serializacion
 from uiMain.VentanaInicio import VentanaInicio
 from uiMain.VentanaPrincipal import VentanaPrincipal
 from uiMain.FieldFrame import FieldFrame
+from gestorAplicacion.ErrorAplicacion import *
 
 import re
 import tkinter as tk
@@ -64,11 +65,11 @@ def primerFuncion():
                     elif seleccion.get() == 2:  # Cliente Nuevo
                         def validar_entrada(nombre, cedula):
                             if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
-                                raise ValueError("El nombre solo puede contener letras y espacios.")
+                                raise ValueError(ExceptionSugerida1())
                             if not re.match("^\d+$", cedula):
-                                raise ValueError("La cédula solo puede contener números.")
+                                raise ValueError(ExceptionSugerida1())
                             if len(cedula) > 15:
-                                raise ValueError("La cédula no puede tener más de 15 caracteres.")
+                                raise ValueError(ExceptionInventada1())
                             return True
 
                         def crearCliente():
@@ -144,8 +145,10 @@ def segundaFuncion():
 
                     def aceptar():
                         diasIngresados = primerFieldFrame.entradas[0].get()
-                        if not diasIngresados or not diasIngresados.isdigit():
-                            messagebox.showwarning("Advertencia", "Faltan campos por llenar o datos incorrectos")
+                        if not diasIngresados:
+                            messagebox.showwarning("Advertencia", ExceptionSugerida2())
+                        elif not diasIngresados.isdigit():
+                            messagebox.showwarning("Advertencia", ExceptionSugerida1())
                         else:
                             diasIngresados = int(diasIngresados)
                             bodegas = supsel.getBodegas()
@@ -175,8 +178,20 @@ def segundaFuncion():
 def terceraFuncion():
     mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
     segundaventana.limpiarFrame(segundaventana.frameProceso)
-    preguntarSupermercado()
-    preguntarEmpleado()
+
+    def supSelect(event):
+        supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+
+    frame1 = tk.Frame(segundaventana.frameProceso, bg="#ffffff")
+    frame1.pack(expand=True, fill="both", padx=10, pady=10)
+    frame1.grid_columnconfigure(0, weight=1)
+    frame1.grid_columnconfigure(1, weight=1)
+
+    lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
+    tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
+    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+    combosup.bind("<<ComboboxSelected>>", supSelect)
+    combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
 
 
 def MostrarVentanaPrincipal(primerventana):
