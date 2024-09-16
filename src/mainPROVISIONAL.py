@@ -9,6 +9,7 @@ from gestorAplicacion.Unidad import Unidad
 from gestorAplicacion.Descuento import Descuento
 from gestorAplicacion.Bodega import Bodega
 from baseDatos.Serializacion import Serializacion
+from gestorAplicacion.ErrorAplicacion import *
 
 barraDeSeparacion = "______________________________________________________________________________________________________"
 
@@ -31,9 +32,11 @@ def crearOrden():
                 print(f"\n- Supermercado {supermercado.getNombre()} seleccionado.")
                 break
             else:
-                print("- Opción inválida, por favor intente de nuevo.")
+                raise ExceptionInventada1()
         except ValueError:
-            print("- Opción inválida, por favor intente de nuevo.")
+            print(ExceptionInventada1())
+        except ExceptionInventada1 as e:
+            print(e)
 
     empleados = supermercado.getEmpleados()
 
@@ -51,9 +54,12 @@ def crearOrden():
                 print(f"\n- {empleado.getCargo()} {empleado.getNombre()} seleccionado.")
                 break
             else:
-                print("- Opción inválida, por favor intente de nuevo.")
+                raise ExceptionInventada1()
         except ValueError:
-            print("- Opción inválida, por favor intente de nuevo.")
+            print(ExceptionInventada1())
+        except ExceptionInventada1 as e:
+            print(e)
+
     while True:
         registrado = input("El cliente ya está registrado? (s/n): ").strip().lower()
         if registrado == 's':
@@ -70,10 +76,13 @@ def crearOrden():
                         print(f"\n- {cliente.getCargo()} {cliente.getNombre()} con cédula {cliente.getCedula()} seleccionado.")
                         break
                     else:
-                        print("- Opción inválida, por favor intente de nuevo.")
+                        raise ExceptionInventada1()
                 except ValueError:
-                    print("- Opción inválida, por favor intente de nuevo.")
+                    print(ExceptionInventada1())
+                except ExceptionInventada1 as e:
+                    print(e)
             break
+        
         elif registrado == 'n':
             nombre = input("Ingrese el nombre del cliente: ")
             cedula = int(input("Ingrese la cédula del cliente: "))
@@ -82,8 +91,10 @@ def crearOrden():
             print(f"\nCliente {nombre} con cédula {cedula} creado con éxito.")
             cliente = nuevo_cliente
             break
+
         else:
-            print("- Opción inválida, por favor intente de nuevo.")
+            print(ExceptionInventada1())
+            
     orden = Orden(supermercado, empleado, cliente)
 
     while True:
@@ -120,9 +131,11 @@ def crearOrden():
                 exit = True
                 break
             else:
-                print("- Opción inválida, por favor intente de nuevo.")
+                raise ExceptionInventada1()
         except ValueError:
-            print("- Opción inválida, por favor intente de nuevo.")
+            print(ExceptionInventada1())
+        except ExceptionInventada1 as e:
+            print(e)
     pass
 
 def agregarProducto(orden):
@@ -162,11 +175,11 @@ def agregarProducto(orden):
                 tipo = TipoProducto.OTRO
                 exit = True
             else:
-                print(barraDeSeparacion)
-                print("- Opción inválida, por favor intente de nuevo.")
+                raise ExceptionInventada1()
         except ValueError:
-            print(barraDeSeparacion)
-            print("- Opción inválida, por favor intente de nuevo.")
+            print(ExceptionInventada1())
+        except ExceptionInventada1 as e:
+            print(e)
 
     lista1 = orden.getSupermercado().productosPorTipo(tipo)
     
@@ -190,9 +203,11 @@ def agregarProducto(orden):
                     if 1 <= opcionproducto <= len(lista1):
                         break
                     else:
-                        print("- Opción inválida, por favor intente de nuevo.")
+                        raise ExceptionInventada1()
                 except ValueError:
-                    print("- Opción inválida, por favor intente de nuevo.")
+                    print(ExceptionInventada1())
+                except ExceptionInventada1 as e:
+                    print(e)
 
             unienof = []
             unisinof = []
@@ -226,9 +241,12 @@ def agregarProducto(orden):
                         if 1 <= opcion <= i:
                             break
                         else:
-                            print("- Opción inválida, por favor intente de nuevo.")
+                            raise ExceptionInventada1()
                     except ValueError:
-                        print("- Opción inválida, por favor intente de nuevo.")
+                        print(ExceptionInventada1())
+                    except ExceptionInventada1 as e:
+                        print(e)
+
 
                 if opcion == 1 and unisinof:
                     while True:
@@ -239,9 +257,12 @@ def agregarProducto(orden):
                                 print("Producto(s) agregado(s) a la orden.")
                                 break
                             else:
-                                print("- Opción inválida, por favor intente de nuevo.")
+                                raise ExceptionInventada1()
                         except ValueError:
-                            print("- Opción inválida, por favor intente de nuevo.")
+                            print(ExceptionInventada1())
+                        except ExceptionInventada1 as e:
+                            print(e)
+
                 else:
                     orden.agregarUnidad(unienof[opcion - 2 if unisinof else opcion - 1])
                     print("Producto agregado a la orden.")
@@ -271,8 +292,13 @@ def quitarProducto(orden):
                     print("El producto se removió con éxito.")
                 elif opcion == i:
                     exit = True
+                else:
+                    raise ExceptionInventada1()
             except ValueError:
-                print("Opción inválida, por favor intente de nuevo.")
+                print(ExceptionInventada1())
+            except ExceptionInventada1 as e:
+                print(e)
+
 
 def mostrarOrden(orden):
     print(barraDeSeparacion)
@@ -792,11 +818,14 @@ if __name__ == "__main__":
         print("2. Manejo de Inventario")
         print("3. Salir")
         print("")
+        opcion = None  
         try:
             opcion = int(input("Seleccione una opción: "))
         except ValueError:
-            print("Por favor ingrese un número entero.")
-            continue
+            print(ExceptionInventada1())
+        except ExceptionInventada1 as e:
+            print(e)
+            break
 
         if opcion == 1:
             crearOrden()
@@ -812,7 +841,7 @@ if __name__ == "__main__":
                 try:
                     opcion = int(input("Seleccione una opción: "))
                 except ValueError:
-                    print("Por favor ingrese un número entero.")
+                    print(ExceptionInventada1())
                     continue
 
                 if opcion == 1:
@@ -824,11 +853,6 @@ if __name__ == "__main__":
                 elif opcion == 3:
                     #surtir()
                     et = True
-                else:
-                    print(barraDeSeparacion)
-                    print("- Opción inválida, por favor intente de nuevo.")
         elif opcion == 3:
             Serializacion.serializar()
             exit = True
-        else:
-            print("Opción inválida, por favor intente de nuevo.")
