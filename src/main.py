@@ -64,6 +64,8 @@ def primerFuncion():
 
                     elif seleccion.get() == 2:  # Cliente Nuevo
                         def validar_entrada(nombre, cedula):
+                            if not nombre or not cedula:
+                                raise ValueError(ExceptionSugerida2())
                             if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
                                 raise ValueError(ExceptionSugerida1())
                             if not re.match("^\d+$", cedula):
