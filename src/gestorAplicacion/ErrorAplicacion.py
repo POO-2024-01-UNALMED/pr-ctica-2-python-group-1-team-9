@@ -14,8 +14,8 @@ class ExceptionC1(ErrorAplicacion):
         super().__init__(f"Error tipo C1: {mensaje}\n{barraDeSeparacion}")
 
 class ExceptionC2(ErrorAplicacion):
-        def __init__(self, mensaje):
-            super().__init__(f"Error tipo C2: {mensaje}")
+    def __init__(self, mensaje):
+        super().__init__(f"Error tipo C1: {mensaje}\n{barraDeSeparacion}")
 
 
 
@@ -24,15 +24,15 @@ class ExceptionC2(ErrorAplicacion):
 
 class ExceptionInventada1(ExceptionC1):
     def __init__(self):
-        super().__init__("Ingreso invalido, pruebe otra vez")
+        super().__init__("Ingreso invalido, pruebe otra vez.")
 
 class ExceptionInventada2(ExceptionC1):
-    def __init__(self, mensaje="Error inventado 2"):
-        super().__init__(f"{super().__str__()}: {mensaje}")
+    def __init__(self):
+        super().__init__("EI2C1")
 
 class ExceptionSugerida1(ExceptionC1):
-    def __init__(self, mensaje="Excepción sugerida 1"):
-        super().__init__(f"{super().__str__()}: {mensaje}")
+    def __init__(self):
+        super().__init__("ESC1")
 
 
 
@@ -40,13 +40,12 @@ class ExceptionSugerida1(ExceptionC1):
 
 
 class ExceptionInventada3(ExceptionC2):
-    def __init__(self, mensaje="Error: Fallo en la seleccion"):
-        super().__init__(f"{super().__str__()}: {mensaje}")
+    def __init__(self):
+        super().__init__("EI1C2")
 
 class ExceptionInventada4(ExceptionC2):
-    def __init__(self, mensaje="Error inventado 4"):
-        super().__init__(f"{super().__str__()}: {mensaje}")
-
+    def __init__(self):
+        super().__init__("EI2C2")
 class ExceptionSugerida2(ExceptionC2):
-    def __init__(self, mensaje="Excepción sugerida 2"):
-        super().__init__(f"{super().__str__()}: {mensaje}")
+    def __init__(self):
+        super().__init__("ESC2")
