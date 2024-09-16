@@ -21,6 +21,7 @@ def primerFuncion():
     segundaventana.limpiarFrame(segundaventana.frameProceso)
 
     def supSelect(event):
+        empsel = ""
         for sup in Supermercado.getSupermercados():
             if sup.getNombre() == combosup.get():
                 supsel = sup
@@ -37,16 +38,55 @@ def primerFuncion():
                 for persona in Persona.getPersonas():
                         if persona.getNombre() == comboemp.get():
                                 empsel = persona
+
+                if empsel != "":
+                    def onSelect():
+                        if seleccion.get() == 1:
+                            def cliSelect(event):
+                                for clie in Persona.getPersonas():
+                                    if clie.getNombre() == combocli.get():
+                                        clisel = clie
+
+                            def crearOrden():
+                                print(str(type(supsel))+" "+str(type(empsel))+" "+str(type(clisel)))
+                                if supsel != "" and empsel != "" and clisel != "":
+                                    orden = Orden(supsel, empsel, clisel)
+                                    print("Orden Creada")
+                                else:
+                                    print("Error, faltan datos") # Mensaje de error
+                            listacli = []
+                            for persona in Persona.getPersonas():
+                                if persona.getCargo() == "Cliente":
+                                    listacli.append(persona.getNombre())
+                            labelcli = tk.Label(frame2, text="Cliente", font=("Arial"))
+                            labelcli.grid(row=1, column=0, pady=5, padx=5, sticky="e")
+                            combocli = ttk.Combobox(frame2, values=listacli, state="readonly")
+                            combocli.bind("<<ComboboxSelected>>",cliSelect)
+                            combocli.grid(row=1, column=1, pady=5, padx=5,sticky="w")
+                            botoncrearorden = tk.Button(frame2, text="Crear Orden", command=crearOrden)
+                            botoncrearorden.grid(row=2, column=0, pady=10, padx=10, columnspan=2)
+                        else:
+                            pass
+                    frame2 = tk.Frame(frame1, bd=2, relief="groove")
+                    frame2.grid(row=2, column=0, columnspan=2)
+                    seleccion = tk.IntVar()
+                    clienteexistente = tk.Radiobutton(frame2, text="Cliente Existente", variable=seleccion, value=1, command=onSelect)
+                    clienteexistente.grid(row=0, column=0, sticky="nsew")
+                    clientenuevo = tk.Radiobutton(frame2, text="Cliente Nuevo", variable=seleccion, value=2, command=onSelect)
+                    clientenuevo.grid(row=0, column=1, sticky="nsew")
+                    seleccion.set(0)
+
+
             labelemp = tk.Label(frame1, text="Empleado", font=("Arial"))
             labelemp.grid(row=1, column=0, pady=5, padx=5, sticky="e")
             comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
             comboemp.bind("<<ComboboxSelected>>",empSelect)
             comboemp.grid(row=1, column=1, pady=5, padx=5,sticky="w")
 
-        
-    
+
     supsel = ""
     empsel = ""
+    clisel = ""
     frame1 = tk.Frame(segundaventana.frameProceso)
     frame1.pack(expand=True,fill="both",padx=10,pady=10)
     frame1.grid_columnconfigure(0, weight=1)
