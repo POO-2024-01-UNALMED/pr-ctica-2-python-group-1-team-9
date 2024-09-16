@@ -13,7 +13,7 @@ from uiMain.VentanaInicio import VentanaInicio
 from uiMain.VentanaPrincipal import VentanaPrincipal
 from uiMain.FieldFrame import FieldFrame
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 
 def primerFuncion():
@@ -104,10 +104,82 @@ def primerFuncion():
 
 
 def segundaFuncion():
-    mostrarFucionalidades("Administrar inventario", "Ingrese el número de días que se usará como criterio para verificar la fecha de vencimiento de los productos disponibles.")
+    mostrarFucionalidades("Administrar inventario", "Administración de inventario. Seleccione el supermercado donde se realizarán las modificaciones")
     segundaventana.limpiarFrame(segundaventana.frameProceso)
-    preguntarSupermercado()
-    preguntarEmpleado()
+    
+    def supSelect(event):
+        for sup in Supermercado.getSupermercados():
+            if sup.getNombre() == combosup.get():
+                supsel = sup
+        
+        if supsel != "":
+            listaemp = []
+            for persona in Persona.getPersonas():
+                if persona.getCargo() != "Cliente":
+                    if persona.getSupermercado().getNombre() == supsel.getNombre():
+                        listaemp.append(persona.getNombre())
+
+            #Lista Empleados
+            def empSelect(event):
+                for persona in Persona.getPersonas():
+                        if persona.getNombre() == comboemp.get():
+                                empsel = persona
+
+                if empsel != "":
+                        primerFieldFrame = FieldFrame(segundaventana.frameProceso, tituloCriterios="Parametro de busqueda", criterios=["Dias"], 
+                                                tituloValores="Cantidad", valores=None, habilitado=None)
+                        primerFieldFrame.pack()
+                        def aceptar():
+                            diasIngresados = primerFieldFrame.entradas[0].get()
+                            falta = False
+                            for entrada in primerFieldFrame.entradas:
+                                if entrada.get() is None or entrada.get() == "":
+                                    falta = True
+                                    break
+                            if falta:
+                                messagebox.showwarning("Advertencia","Faltan campos por llenar") #Esto tiene que ser con una excepcion!!!!!!!!
+                            else:
+                                return int(diasIngresados)
+                        primerFieldFrame.botonAceptar.config(command=aceptar)
+                        bodegas = supsel.getBodegas()
+                        unidades = []
+                        avencer = []
+
+                        for bodega in bodegas:
+                            unidades.extend(bodega.getProductos())
+
+                        for unidad in unidades:
+                            dias = unidad.diasParaVencimiento()
+                            if dias <= diasIngresados:
+                                avencer.append(unidad)
+
+                        avencer.sort(key=lambda u: u.diasParaVencimiento())
+
+            labelemp = tk.Label(frame1, text="Empleado", font=("Arial"))
+            labelemp.grid(row=1, column=0, pady=5, padx=5, sticky="e")
+            comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
+            comboemp.bind("<<ComboboxSelected>>",empSelect)
+            comboemp.grid(row=1, column=1, pady=5, padx=5,sticky="w")
+
+    
+    diasIngresados = 0
+    supsel = ""
+    empsel = ""
+    frame1 = tk.Frame(segundaventana.frameProceso)
+    frame1.pack(expand=True,fill="both",padx=10,pady=10)
+    frame1.grid_columnconfigure(0, weight=1)
+    frame1.grid_columnconfigure(1, weight=1)
+
+    # Lista Supermercados
+    labelsup = tk.Label(frame1, text="Supermercado", font=("Arial"))
+    labelsup.grid(row=0, column=0, pady=5, padx=5, sticky="e")
+    lista = []
+    for supermercado in Supermercado.getSupermercados():
+        lista.append(supermercado.getNombre())
+    combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+    combosup.bind("<<ComboboxSelected>>",supSelect)
+    combosup.grid(row=0, column=1, pady=5, padx=5,sticky="w")
+
 
 def terceraFuncion():
     mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
@@ -155,7 +227,6 @@ def preguntarSupermercado():
     combosup.bind("<<ComboboxSelected>>",onComboboxSelect)
     combosup.grid(row=0, column=1, pady=5, padx=5,sticky="w")
     
-
 def preguntarEmpleado():
     pass
 
