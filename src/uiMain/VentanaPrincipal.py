@@ -17,13 +17,7 @@ class VentanaPrincipal(tk.Toplevel):
         self.labelInformativo = tk.Label(self.frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
         self.labelInformativo.pack(expand=True, fill = "both")
 
-        self.frameNombreProceso = tk.Frame(self.frameDeInteraccion, bg="black")
-        self.labelNombreProceso = tk.Label(self.frameNombreProceso, text="Nombre del Proceso", font=("Arial"), bg="white")
-
-        self.frameDescripcionProceso = tk.Frame(self.frameDeInteraccion, bg="black")
-        self.labelDescripcionProceso = tk.Label(self.frameDescripcionProceso, text="Descripcion del Proceso" ,wraplength=760 ,font=("Arial"), bg="white")
-
-        self.frameProceso = tk.Frame(self.frameDeInteraccion, bg="green")
+        self.crearFrames()
 
         self.menuBar = tk.Menu(self)
         self.config(menu=self.menuBar)
@@ -33,7 +27,14 @@ class VentanaPrincipal(tk.Toplevel):
         
     #frame = FieldFrame(frameDeInteraccion,tituloCriterios = "",criterios = ["nombre","apellido"], tituloValores = "",valores = None, habilitado = None)
 
-    
+    def crearFrames(self):
+        self.frameNombreProceso = tk.Frame(self.frameDeInteraccion, bd=3, relief="raised")
+        self.labelNombreProceso = tk.Label(self.frameNombreProceso, text="Nombre del Proceso", font=("Arial"))
+
+        self.frameDescripcionProceso = tk.Frame(self.frameDeInteraccion, bd=3, relief="raised")
+        self.labelDescripcionProceso = tk.Label(self.frameDescripcionProceso, text="Descripcion del Proceso" ,wraplength=760 ,font=("Arial"))
+
+        self.frameProceso = tk.Frame(self.frameDeInteraccion, bd=3, relief="groove")
 
     def regresarVentanaInicio(self): # Oculta la segunda ventana ("Plataforma Super Usable Para Supermercados (PSUPS)") y muestra la primera ("Ventana de inicio")
         self.primerventana.deiconify()
@@ -51,15 +52,11 @@ class VentanaPrincipal(tk.Toplevel):
         self.labelInformativo.pack(expand=True, fill = "both")
 
     def ReiniciarFrameDeInteraccion(self):
-        self.clear_frame(self.frameDeInteraccion)
-        self.frameNombreProceso = tk.Frame(self.frameDeInteraccion, bg="black")
-        self.labelNombreProceso = tk.Label(self.frameNombreProceso, text="Nombre del Proceso", font=("Arial"), bg="white")
-        self.frameDescripcionProceso = tk.Frame(self.frameDeInteraccion, bg="black")
-        self.labelDescripcionProceso = tk.Label(self.frameDescripcionProceso, text="Descripcion del Proceso" ,wraplength=760 ,font=("Arial"), bg="white")
+        self.limpiarFrame(self.frameDeInteraccion)
+        self.crearFrames()
         self.labelInformativo = tk.Label(self.frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
-        self.frameProceso = tk.Frame(self.frameDeInteraccion, bg="green")
 
-    def clear_frame(self, frame): # Recorremos todos los widgets dentro del frame y los destruimos
+    def limpiarFrame(self, frame): # Recorremos todos los widgets dentro del frame y los destruimos
         for widget in frame.winfo_children():
             widget.destroy()
 

@@ -13,20 +13,25 @@ from uiMain.VentanaInicio import VentanaInicio
 from uiMain.VentanaPrincipal import VentanaPrincipal
 from uiMain.FieldFrame import FieldFrame
 import tkinter as tk
+from tkinter import ttk
 
 def primerFuncion():
-    mostrarFucionalidades("Creación de orden de compra", "Creación de nueva orden de compra.")
-    preguntarSupermercado()
+    mostrarFucionalidades("Orden de compra", "Creación de nueva orden de compra. Seleccione el supermercado donde se realizará la compra, seguido del empleado y del cliente.")
+    segundaventana.limpiarFrame(segundaventana.frameProceso)
+    supermercado1 = preguntarSupermercado()
+    print(supermercado1.getNombre())
     preguntarEmpleado()
     preguntarCliente()
 
 def segundaFuncion():
     mostrarFucionalidades("Administrar inventario", "Ingrese el número de días que se usará como criterio para verificar la fecha de vencimiento de los productos disponibles.")
+    segundaventana.limpiarFrame(segundaventana.frameProceso)
     preguntarSupermercado()
     preguntarEmpleado()
 
 def terceraFuncion():
     mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
+    segundaventana.limpiarFrame(segundaventana.frameProceso)
     preguntarSupermercado()
     preguntarEmpleado()
 
@@ -42,17 +47,28 @@ def mostrarFucionalidades(NombreProceso, DescripcionProceso):
 
     segundaventana.frameNombreProceso.grid(row=0, column=0, pady=(5,2.5), padx=5, ipady=2)
     segundaventana.labelNombreProceso.config(text=NombreProceso)
-    segundaventana.labelNombreProceso.pack(padx=5, pady=5, expand= True)
+    segundaventana.labelNombreProceso.pack(padx=5, pady=5)
  
     segundaventana.frameDescripcionProceso.grid(row=1, column=0, sticky="ew", pady=(2.5,2.5), padx=5, ipady=4)
     segundaventana.labelDescripcionProceso.config(text=DescripcionProceso)
     segundaventana.labelDescripcionProceso.pack(padx=5, pady=5, expand= True, fill="x")
     
-    segundaventana.frameProceso.grid(row=2, column=0, sticky="snew", pady=(2.5,5), padx=5)
+    segundaventana.frameProceso.grid(row=2, column=0, sticky="n", pady=(2.5,5), padx=5)
 
 def preguntarSupermercado():
-    #frameDescripcionProceso.config
-    pass
+    supermercado = tk.StringVar()
+    frame1 = tk.Frame(segundaventana.frameProceso)
+    frame1.pack(expand=True,fill="both",padx=10,pady=10)
+    frame1.grid_columnconfigure(0, weight=1)
+    frame1.grid_columnconfigure(1, weight=1)
+    labelsup = tk.Label(frame1, text="Supermercado", font=("Arial"))
+    labelsup.grid(row=0, column=0, pady=5, padx=5, sticky="e")
+    lista = []
+    for supermercado in Supermercado.getSupermercados():
+        lista.append(supermercado.getNombre())
+    combosup = ttk.Combobox(frame1, values=lista, state="readonly", textvariable=supermercado)
+    combosup.grid(row=0, column=1, pady=5, padx=5,sticky="w")
+    
 
 def preguntarEmpleado():
     #frameDescripcionProceso.config
@@ -63,6 +79,8 @@ def preguntarCliente():
     pass
 
 if __name__ == "__main__":
+
+    Serializacion.deserializar()
 
     primerventana = VentanaInicio()
     primerventana.botonP4.config(command=lambda: MostrarVentanaPrincipal(primerventana))
