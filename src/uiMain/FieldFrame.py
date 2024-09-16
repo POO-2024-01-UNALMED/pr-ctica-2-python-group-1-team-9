@@ -18,7 +18,7 @@ class FieldFrame(Frame):
 
         self.diccionario = {}
         self.entradas = []
-        self.pack(expand=True,fill="both",padx=10,pady=10)
+        #self.pack(expand=True,fill="both",padx=10,pady=10)
         tituloCriterios = Label(self, text=tituloCriterios, font=("Arial"))
         tituloCriterios.grid(row=0, column=0, padx=5, pady=5)
         tituloValores = Label(self, text=tituloValores, font=("Arial"))
