@@ -216,68 +216,76 @@ class Aplicacion():
         
             # Actualizar el segundo Combobox con la lista filtrada
             combosup2.config(values=lista_filtrada)
-            combosup2.set('')  # Limpiar cualquier selección previa
+            combosup2.set('')  
 
         def mostrar_productos():
             # Limpiar el frame de productos anterior
             for widget in frame_productos.winfo_children():
                 widget.destroy()
 
-            # Obtener los supermercados seleccionados
             nombre_sup1 = combosup1.get()
             nombre_sup2 = combosup2.get()
             
             supermercado1 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup1), None)
             supermercado2 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup2), None)
 
-            if supermercado1 and supermercado2:
-                # Configurar los listboxes para los productos de los supermercados
-                frame_supermercado1 = tk.Frame(frame_productos)
-                frame_supermercado1.pack(side="left", fill="y", padx=10, pady=10)
+            try:
+                    if not supermercado1 or not supermercado2:
+                        raise ExceptionInventada3() 
+                    
+                    frame_supermercado1 = tk.Frame(frame_productos)
+                    frame_supermercado1.pack(side="left", fill="y", padx=10, pady=10)
 
-                listbox1 = tk.Listbox(frame_supermercado1, width=40, height=15)
-                scrollbar1 = tk.Scrollbar(frame_supermercado1, orient="vertical")
-                scrollbar1.config(command=listbox1.yview)
-                listbox1.config(yscrollcommand=scrollbar1.set)
-                scrollbar1.pack(side="right", fill="y")
-                listbox1.pack(side="left", fill="both", expand=True)
+                    listbox1 = tk.Listbox(frame_supermercado1, width=40, height=15)
+                    scrollbar1 = tk.Scrollbar(frame_supermercado1, orient="vertical")
+                    scrollbar1.config(command=listbox1.yview)
+                    listbox1.config(yscrollcommand=scrollbar1.set)
+                    scrollbar1.pack(side="right", fill="y")
+                    listbox1.pack(side="left", fill="both", expand=True)
 
-                # Agregar productos del supermercado 1 a la lista
-                for prod in Producto.getListaProductos():
-                    i = sum(1 for bodega in supermercado1.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == prod.getNombre())
-                    listbox1.insert("end", f"{prod.getNombre()} // {i} unidades")
+                    # Agregar productos del supermercado 1 a la lista
+                    for prod in Producto.getListaProductos():
+                        i = sum(1 for bodega in supermercado1.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == prod.getNombre())
+                        listbox1.insert("end", f"{prod.getNombre()} // {i} unidades")
 
-                # Configurar la segunda listbox para el segundo supermercado
-                frame_supermercado2 = tk.Frame(frame_productos)
-                frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
+                    frame_supermercado2 = tk.Frame(frame_productos)
+                    frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
 
-                listbox2 = tk.Listbox(frame_supermercado2, width=40, height=15)
-                scrollbar2 = tk.Scrollbar(frame_supermercado2, orient="vertical")
-                scrollbar2.config(command=listbox2.yview)
-                listbox2.config(yscrollcommand=scrollbar2.set)
-                scrollbar2.pack(side="right", fill="y")
-                listbox2.pack(side="left", fill="both", expand=True)
+                    listbox2 = tk.Listbox(frame_supermercado2, width=40, height=15)
+                    scrollbar2 = tk.Scrollbar(frame_supermercado2, orient="vertical")
+                    scrollbar2.config(command=listbox2.yview)
+                    listbox2.config(yscrollcommand=scrollbar2.set)
+                    scrollbar2.pack(side="right", fill="y")
+                    listbox2.pack(side="left", fill="both", expand=True)
 
-                # Agregar productos del supermercado 2 a la lista
-                for prod in Producto.getListaProductos():
-                    i = sum(1 for bodega in supermercado2.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == prod.getNombre())
-                    listbox2.insert("end", f"{prod.getNombre()} // {i} unidades")
-            else:
-                messagebox.showerror("Error", "Debe seleccionar dos supermercados.")
+                    # Agregar productos del supermercado 2 a la lista
+                    for prod in Producto.getListaProductos():
+                        i = sum(1 for bodega in supermercado2.getBodegas() for unidad in bodega.getProductos() if unidad.getTipo().getNombre() == prod.getNombre())
+                        listbox2.insert("end", f"{prod.getNombre()} // {i} unidades")
+
+            except ExceptionInventada3 as e:
+                messagebox.showwarning("Advertencia", str(e))
 
 
         def confirmar_intercambio():
             supermercado1 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup1.get()), None)
             supermercado2 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup2.get()), None)
 
-            if supermercado1 and supermercado2:
+            try:
+                if not supermercado1 or not supermercado2:
+                    raise ExceptionInventada3() 
+
                 confirmacion = messagebox.askyesno("Confirmar", "¿Desea intercambiar productos entre los supermercados?")
                 if confirmacion:
                     envia = supermercado1
                     recibe = supermercado2
                     messagebox.showinfo("Intercambio", f"Intercambio confirmado entre {envia.getNombre()} y {recibe.getNombre()}")
-            else:
-                messagebox.showerror("Error", "Debe seleccionar dos supermercados.")
+            
+            except ExceptionInventada3 as e:
+                messagebox.showwarning("Advertencia", str(e))
+
+
+
 
         # Frame principal
         frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
@@ -304,6 +312,8 @@ class Aplicacion():
         # Frame para mostrar productos
         frame_productos = tk.Frame(frame1)
         frame_productos.grid(row=3, column=0, columnspan=2, pady=10, padx=5, sticky="nsew")
+
+
 
 
 

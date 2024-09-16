@@ -26,7 +26,7 @@ class ExceptionC2(ErrorAplicacion):
 
 class ExceptionInventada1(ExceptionC1):
     def __init__(self):
-        super().__init__("El ingreso excede los caracteres permitidos, intente otra vez")
+        super().__init__("El ingreso excede los caracteres permitidos, intente otra vez.")
 
 class ExceptionInventada2(ExceptionC1):
     def __init__(self):
@@ -34,7 +34,7 @@ class ExceptionInventada2(ExceptionC1):
 
 class ExceptionSugerida1(ExceptionC1):
     def __init__(self):
-        super().__init__("Ingreso invalido, intente otra vez.")
+        super().__init__("Caracteres invalidos, intente otra vez.")
 
 
 
@@ -43,7 +43,7 @@ class ExceptionSugerida1(ExceptionC1):
 
 class ExceptionInventada3(ExceptionC2):
     def __init__(self):
-        super().__init__("EI1C2")
+        super().__init__("Debe seleccionar una o todas las opciones necesarias.")
 
 class ExceptionInventada4(ExceptionC2):
     def __init__(self):
