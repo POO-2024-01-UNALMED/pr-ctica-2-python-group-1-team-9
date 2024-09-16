@@ -2,6 +2,7 @@ from tkinter import Frame,Label,Entry
 from .VentanaInicio import VentanaInicio
 import tkinter as tk
 from tkinter import messagebox
+from gestorAplicacion.ErrorAplicacion import *
 
 class FieldFrame(Frame):
 
@@ -31,7 +32,7 @@ class FieldFrame(Frame):
                     falta = True
                     break
             if falta:
-               messagebox.showwarning("Advertencia","Faltan campos por llenar") #Esto tiene que ser con una excepcion!!!!!!!!
+               messagebox.showwarning(ExceptionSugerida2()) #Esto tiene que ser con una excepcion!!!!!!!!
             return not falta 
 
         def borrar():
