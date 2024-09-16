@@ -32,7 +32,7 @@ class FieldFrame(Frame):
                     falta = True
                     break
             if falta:
-               messagebox.showwarning(ExceptionSugerida2()) #Esto tiene que ser con una excepcion!!!!!!!!
+               messagebox.showwarning("Advertencia",ExceptionSugerida2()) #Esto tiene que ser con una excepcion!!!!!!!!
             return not falta 
 
         def borrar():
