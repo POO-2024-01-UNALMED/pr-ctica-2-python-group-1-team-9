@@ -77,9 +77,8 @@ def primerFuncion():
                     # Implementa la lógica para crear una orden de compra aquí
                     messagebox.showinfo("Crear Orden", "Orden de compra creada.")
 
-                def onSelect():
-                    frame2.pack_forget()  # Ocultar el frame2 actual
-                    if seleccion.get() == 1:  # Cliente Existente
+                def onSelect():  
+                    if seleccion.get() == 1:  
                         frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
                         frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
                         tk.Label(frame2, text="Nombre del Cliente").grid(row=0, column=0, pady=5, padx=5, sticky="e")
