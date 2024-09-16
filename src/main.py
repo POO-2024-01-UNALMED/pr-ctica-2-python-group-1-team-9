@@ -12,6 +12,9 @@ from baseDatos.Serializacion import Serializacion
 from uiMain.VentanaInicio import VentanaInicio
 from uiMain.VentanaPrincipal import VentanaPrincipal
 from uiMain.FieldFrame import FieldFrame
+
+import re
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -30,7 +33,7 @@ def primerFuncion():
                 empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
 
                 def onSelect():
-                    if seleccion.get() == 1:  # Cliente Existente
+                    if seleccion.get() == 1:  
                         def cliSelect(event):
                             clisel = next((clie for clie in Persona.getPersonas() if clie.getNombre() == combocli.get()), None)
 
@@ -39,7 +42,7 @@ def primerFuncion():
                                 orden = Orden(supsel, empsel, clisel)
                                 print("Orden Creada")
                             else:
-                                print("Error, faltan datos")  # Mensaje de error
+                                print("Error, faltan datos")  
 
                         listacli = [persona.getNombre() for persona in Persona.getPersonas() if persona.getCargo() == "Cliente"]
                         tk.Label(frame2, text="Cliente", font=("Arial", 12)).grid(row=1, column=0, pady=5, padx=5, sticky="e")
@@ -48,10 +51,15 @@ def primerFuncion():
                         combocli.grid(row=1, column=1, pady=5, padx=5, sticky="w")
                         tk.Button(frame2, text="Crear Orden", command=crearOrden).grid(row=2, column=0, pady=10, padx=10, columnspan=2)
                     
-                    elif seleccion.get() == 2:  # nuevo cliente 
+                    elif seleccion.get() == 2:  # Cliente Nuevo
                         def crearCliente():
                             nombre = entryNombre.get()
                             cedula = entryCedula.get()
+
+                            if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
+                                messagebox.showwarning("Advertencia", "El nombre solo puede contener letras y espacios.")
+                                return
+
                             if nombre and cedula:
                                 nuevo_cliente = Cliente(nombre, cedula, supsel)  
                                 Persona.agregarPersona(nuevo_cliente)  
