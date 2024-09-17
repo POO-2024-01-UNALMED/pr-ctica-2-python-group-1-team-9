@@ -15,7 +15,7 @@ class FieldFrame(Frame):
         self.criterios = criterios
         self.tituloValores = tituloValores
         self.valores = valores
-        self.habilidato = habilitado
+        self.habilitado = habilitado
 
         self.diccionario = {}
         self.entradas = []
@@ -24,6 +24,9 @@ class FieldFrame(Frame):
         tituloCriterios.grid(row=0, column=0, padx=5, pady=5)
         tituloValores = Label(self, text=tituloValores, font=("Arial"))
         tituloValores.grid(row=0, column=1, padx=5, pady=5)
+
+        self.grid_columnconfigure(0, weight=0)
+        self.grid_columnconfigure(1, weight=0)
 
         def aceptar():
             falta = False
@@ -47,9 +50,11 @@ class FieldFrame(Frame):
 
         for i, criterio in enumerate(criterios):
             etiqueta = Label(self, text=criterio, font=("Arial"))
-            if valores is not None:
+            if self.valores is not None:
                 valorinicial = tk.StringVar(value=valores[i])
                 entrada = Entry(self, font=("Arial"), textvariable=valorinicial)
+                if (self.habilitado[i] is not None) and (self.habilitado[i] != ""):
+                    entrada.config(state="disabled")
             else:
                 entrada = Entry(self, font=("Arial"))
             

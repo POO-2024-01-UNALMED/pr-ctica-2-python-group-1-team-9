@@ -7,7 +7,7 @@ class VentanaPrincipal(tk.Toplevel):
         # Configuración basica de la ventana
         self.primerventana = primerventana
         self.title("Plataforma Super Usable Para Supermercados (PSUPS)")
-        self.geometry("800x600")
+        self.geometry("800x750")
         self.protocol("WM_DELETE_WINDOW", self.regresarVentanaInicio) #Si se cierra la ventana se muestra la primera y se oculta la segunda.
 
         self.config(background="black")

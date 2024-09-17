@@ -28,6 +28,8 @@ class Aplicacion():
         self.tipsel = None
         self.prodsel = None
 
+        self.corredor = 0
+
         self.orden = None
 
         self.listasup = []
@@ -35,6 +37,7 @@ class Aplicacion():
         self.lista_unidades = []
         self.lista1 = []
         self.lista2 = []
+        self.listaAvencer = []
 
         self.primerventana = VentanaInicio()
         self.segundaventana = VentanaPrincipal(self.primerventana)
@@ -326,55 +329,316 @@ class Aplicacion():
     def segundaFuncion(self):
         self.mostrarFucionalidades("Administrar inventario", "Administración de inventario. Seleccione el supermercado donde se realizarán las modificaciones")
         self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
+        self.corredor = 0
+        self.supsel = None
+        self.clisel = None
+        rangodias = None
+        listaDefieldsFrames = []
+        self.listaAvencer = []
 
         def supSelect(event):
-            supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+            self.supsel = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == combosup.get()), None)
+            listaemp = [persona.getNombre() for persona in Persona.getPersonas() if persona.getCargo() != "Cliente" if persona.getSupermercado().getNombre() == self.supsel.getNombre()]
+            comboemp.config(values=listaemp)
+            comboemp.set("")
+            if self.empsel is not None:
+                self.empsel = None
 
-            if supsel:
-                listaemp = [persona.getNombre() for persona in Persona.getPersonas()
-                            if persona.getCargo() != "Cliente" and persona.getSupermercado().getNombre() == supsel.getNombre()]
+        def empSelect(event):
+            self.empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
+        
+        def validarDescuento():
+            for widget in self.segundaventana.frameProceso.winfo_children():
+                widget.pack_forget()
+            listaDefieldsFrames[self.corredor].pack(expand = True, fill = "both")
+            listaDefieldsFrames[self.corredor].botonAceptar.config(command= lambda: aceptar2(listaDefieldsFrames[self.corredor]))
+        
+        def aceptar1(primmerFieldFrame):
+            try:
 
-                def empSelect(event):
-                    empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
+                if frameProductosVencidos.winfo_manager() == "grid":
+                    frameProductosVencidos.grid_forget()
+                if frameProductosPorVencer.winfo_manager() == "grid":
+                    frameProductosPorVencer.grid_forget()
+                if labelVencidos.winfo_manager() == "grid":
+                    labelVencidos.grid_forget()
+                if labelPorVencer.winfo_manager() == "grid":
+                    labelPorVencer.grid_forget()
 
-                    if empsel:
-                        primerFieldFrame = FieldFrame(self.segundaventana.frameProceso, tituloCriterios="Parametro de busqueda", criterios=["Días"], 
-                                                    tituloValores="Cantidad", valores=None, habilitado=None)
-                        primerFieldFrame.pack()
+                for entrada in primmerFieldFrame.entradas:
+                    if entrada.get() is None or entrada.get() == "":
+                        raise ExceptionSugerida2()
 
-                        def aceptar():
-                            diasIngresados = primerFieldFrame.entradas[0].get()
-                            if not diasIngresados:
-                                messagebox.showwarning("Advertencia", ExceptionSugerida2())
-                            elif not diasIngresados.isdigit():
-                                messagebox.showwarning("Advertencia", ExceptionSugerida1())
+                if not re.match("^\d+$", primmerFieldFrame.entradas[0].get()):
+                    raise ExceptionSugerida1()
+                
+                rangodias = int(primmerFieldFrame.entradas[0].get())
+
+                mostrarProductos(rangodias)
+
+            except ExceptionSugerida2 as e2:
+                messagebox.showwarning("Advertencia",str(e2))
+
+            except ExceptionSugerida1 as e1:
+                messagebox.showwarning("Advertencia",str(e1))
+            
+        def aceptar2(frame):
+            try:
+                if self.corredor+1 < len(listaDefieldsFrames):
+                    self.corredor = self.corredor + 1
+
+                    if frame.entradas[3].get() is None or frame.entradas[3].get() == "":
+                        raise ExceptionSugerida2()
+
+                    if not re.match("^\d+$", frame.entradas[3].get()):
+                        raise ExceptionSugerida1()
+                    
+                    if int(frame.entradas[3].get()) > 0:
+                        nuevoDescuento = Descuento("Descuento por vencimiento",(self.listaAvencer[self.corredor]),int(frame.entradas[3].get()))
+
+                    validarDescuento()
+                
+                else:
+                    print(self.listaAvencer[2].isOferta())
+
+            except ExceptionSugerida2 as e2:
+                messagebox.showwarning("Advertencia",str(e2))
+
+            except ExceptionSugerida1 as e1:
+                messagebox.showwarning("Advertencia",str(e1))
+            
+
+        def mostrarProductos(rangodias):
+            try:
+                if self.supsel and self.empsel and (rangodias or (rangodias == 0)):
+
+                    if listbox3.size() > 0:
+                        listbox3.delete(0, tk.END)
+
+                    if listbox4.size() > 0:
+                        listbox4.delete(0, tk.END)
+
+                    bodegas = self.supsel.getBodegas()
+                    unidades = []
+                    avencer = []
+                    vencidos = []
+
+                    for bodega in bodegas:
+                        unidades.extend(bodega.getProductos())
+                    
+                    for unidad in unidades:
+                        dias = unidad.diasParaVencimiento()
+                        if dias <= rangodias:
+                            if dias > 0:
+                                avencer.append(unidad)
                             else:
-                                diasIngresados = int(diasIngresados)
-                                bodegas = supsel.getBodegas()
-                                unidades = [producto for bodega in bodegas for producto in bodega.getProductos()]
-                                avencer = [unidad for unidad in unidades if unidad.diasParaVencimiento() <= diasIngresados]
-                                avencer.sort(key=lambda u: u.diasParaVencimiento())
-                            
-                            
+                                vencidos.append(unidad)
+                        else:
+                            pass
+                    
+                    avencer.sort(key=lambda u: u.diasParaVencimiento())
 
-                        primerFieldFrame.botonAceptar.config(command=aceptar)
+                    if rangodias == 0 and len(vencidos) > 0:
 
-                tk.Label(frame1, text="Empleado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
-                comboemp = ttk.Combobox(frame1, values=listaemp, state="readonly")
-                comboemp.bind("<<ComboboxSelected>>", empSelect)
-                comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
+                        frame1.grid(columnspan=1)
+
+                        labelVencidos.grid(row=1, column=0, pady=5, padx=5, sticky="we", columnspan=2)
+                        frameProductosVencidos.grid(row=2, column=0, pady=5, padx=5, sticky="we", columnspan=2)
+
+                        items1 = []
+
+                        for unidad in vencidos:
+
+                            item1 = f"{unidad.getTipo().getNombre()}, codigo: {unidad.getCodigo()}, Ubicación: {unidad.getUbicacion().getNombre()}"
+                            items1.append(item1)
+
+                        for elemento in items1:
+                            listbox3.insert("end", elemento)
+
+                        anchoMax1 = max(len(item1) for item1 in items1)
+                        numItems1 = listbox3.size()
+                        listbox3.config(width=anchoMax1 + 1, height=min(numItems1, 10))
+
+                        bontonParaContinuar.config(text="Eliminar Vencidos",command= lambda: ElimiarVencidos(self.supsel,rangodias))
+                        bontonParaContinuar.grid(row=3, column= 0, padx=5, pady=5, columnspan=2)
+                    
+                    elif len(avencer) > 0 and len(vencidos) > 0:
+
+                        frame1.grid(columnspan=2)
+
+                        labelVencidos.grid(row=1, column=0, pady=5, padx=5, sticky="we")
+                        frameProductosVencidos.grid(row=2, column=0, pady=5, padx=5, sticky="we")
+
+                        items2 = []
+
+                        for unidad in vencidos:
+                            item2 = f"{unidad.getTipo().getNombre()}, codigo: {unidad.getCodigo()}, Ubicación: {unidad.getUbicacion().getNombre()}"
+                            items2.append(item2)
+
+                        for elemento in items2:
+                            listbox3.insert("end", elemento)
+
+                        anchoMax2 = max(len(item2) for item2 in items2)
+                        numItems2 = listbox3.size()
+                        listbox3.config(width=anchoMax2 + 1, height=min(numItems2, 10))
+
+                        botonParaEliminar.config(text="Eliminar vencidos",command= lambda: ElimiarVencidos(self.supsel,rangodias))
+                        botonParaEliminar.grid(row=3, column= 0, padx=5, pady=5)
+
+                        labelPorVencer.grid(row=1, column=1, pady=5, padx=5, sticky="we")
+                        frameProductosPorVencer.grid(row=2, column=1, pady=5, padx=5, sticky="we")
+
+                        items3 = []
+
+                        for unidad in avencer:
+
+                            item3 = f"{unidad.getTipo().getNombre()}, codigo: {unidad.getCodigo()}, Ubicación: {unidad.getUbicacion().getNombre()}, Días para vencer: {unidad.diasParaVencimiento()}"
+                            items3.append(item3)
+
+                        for elemento in items3:
+                            listbox4.insert("end", elemento)
+
+                        anchoMax3 = max(len(item3) for item3 in items3)
+                        numItems3 = listbox4.size()
+                        listbox4.config(width=anchoMax3 + 1, height=min(numItems3, 10))
+
+                        botonParaDescuentos.config(text="Continuar",command= lambda: continuarDescuentos(self.supsel,rangodias))
+                        botonParaDescuentos.grid(row=3, column= 1, padx=5, pady=5)
+
+                    elif len(avencer) > 0 and len(vencidos) == 0:
+
+                        frame1.grid(columnspan=1)
+
+                        labelPorVencer.grid(row=1, column=0, pady=5, padx=5, sticky="we", columnspan=2)
+                        frameProductosPorVencer.grid(row=2, column=0, pady=5, padx=5, sticky="we", columnspan=2)
+
+                        items4 = []
+
+                        for unidad in avencer:
+                            item4 = f"{unidad.getTipo().getNombre()}, codigo: {unidad.getCodigo()}, Ubicación: {unidad.getUbicacion().getNombre()}, Días para vencer: {unidad.diasParaVencimiento()}"
+                            items4.append(item4)
+                        
+                        for elemento in items4:
+                            listbox4.insert("end", elemento)
+
+                        anchoMax4 = max(len(item4) for item4 in items4)
+                        numItems4 = listbox4.size()
+                        listbox4.config(width=anchoMax4 + 1, height=min(numItems4, 10))
+
+                        bontonParaContinuar.config(text="Continuar",command= lambda: continuarDescuentos(self.supsel,rangodias))
+                        bontonParaContinuar.grid(row=3, column= 0, padx=5, pady=5, columnspan=2)
+
+                    else:
+                        messagebox.showinfo("",f"No hay productos vencidos, o proximos a vencer en {rangodias} dias")
+
+                else:
+                    raise ExceptionSugerida2()
+            except ExceptionSugerida2 as e2:
+                messagebox.showwarning("Advertencia",str(e2))
+
+        def ElimiarVencidos(supermercado,rangodias):
+
+            listbox3.delete(0, tk.END)
+            
+            labelVencidos.grid_forget()
+            frameProductosVencidos.grid_forget()
+            bontonParaContinuar.grid_forget()
+            botonParaEliminar.destroy()
+
+            bodegas = supermercado.getBodegas()
+            unidades2 = []
+
+            for bodega in bodegas:
+                unidades2.append(bodega.getProductos())
+            
+            for unidad in unidades2:
+                dias = unidad.diasParaVencimiento()
+                if dias <= rangodias:
+                   unidad.getUbicacion().quitarProducto(unidad)
+                   unidad.getTipo().getUnidades().remove(unidad)
+
+        def continuarDescuentos(supermercado,rangodias):
+            self.mostrarFucionalidades("Administrar inventario", "Administración de inventario. Ingrese el descuento de cada producto proximo a vencer.")
+            self.corredor = 0
+            bodegas = supermercado.getBodegas()
+            unidades = []
+            avencer = []
+
+            for bodega in bodegas:
+                unidades.extend(bodega.getProductos())
+            
+            for unidad in unidades:
+                dias = unidad.diasParaVencimiento()
+                if dias <= rangodias and dias > 0:
+                    avencer.append(unidad)
+                    self.listaAvencer.append(unidad)
+
+            avencer.sort(key=lambda u: u.diasParaVencimiento())
+            self.limpiarFrame(self.segundaventana.frameProceso)
+
+            for unidad in avencer:
+                
+                if unidad.calcularOferta() is None:
+                    descuento = 0
+                else:
+                    descuento = unidad.calcularOferta().getPorcentajeDescuento()
+                    
+                fieldFrameDescuento = FieldFrame(self.segundaventana.frameProceso, tituloCriterios="Info", criterios=["Producto", "Codigo","Vence en (dias)","Descuento actual (%)"], 
+                            tituloValores="Valores", valores=[f"{unidad.getTipo().getNombre()}", f"{unidad.getCodigo()}",f"{unidad.diasParaVencimiento()}",f"{descuento}"], 
+                            habilitado=["Noedit","Noedit","Noedit",None])
+
+                listaDefieldsFrames.append(fieldFrameDescuento)
+
+            validarDescuento()
+            
 
         frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
-        frame1.pack(expand=True, fill="both", padx=10, pady=10)
+        frame1.grid(row=0, column=0)
         frame1.grid_columnconfigure(0, weight=1)
         frame1.grid_columnconfigure(1, weight=1)
 
-        lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
+        self.listasup = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
+        self.listacli = [persona.getNombre() for persona in Persona.getPersonas() if persona.getCargo() == "Cliente"]
+
         tk.Label(frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
-        combosup = ttk.Combobox(frame1, values=lista, state="readonly")
+        combosup = ttk.Combobox(frame1, values=self.listasup, state="readonly")
         combosup.bind("<<ComboboxSelected>>", supSelect)
         combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
 
+        tk.Label(frame1, text="Empleado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
+        empvariable = tk.StringVar()
+        comboemp = ttk.Combobox(frame1,textvariable=empvariable, state="readonly")
+        comboemp.bind("<<ComboboxSelected>>", empSelect)
+        comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
+
+        primmerFieldFrame = FieldFrame(frame1, tituloCriterios="Rango de dias", criterios=["Dias"], tituloValores="Cantidad", valores=None, habilitado=None)
+        primmerFieldFrame.grid(row=2, column=0, pady=5, padx=5, sticky="we", columnspan=2)
+        primmerFieldFrame.botonAceptar.config(command= lambda: aceptar1(primmerFieldFrame))
+
+        frameProductosVencidos = tk.Frame(self.segundaventana.frameProceso, padx= 5, pady=5)
+        frameProductosPorVencer = tk.Frame(self.segundaventana.frameProceso, padx= 5, pady=5)
+
+        labelVencidos = tk.Label(self.segundaventana.frameProceso, text="Productos vencidos", font=("Arial"))
+        labelPorVencer = tk.Label(self.segundaventana.frameProceso, text="Productos a vencer", font=("Arial"))
+
+        listbox3 = tk.Listbox(frameProductosVencidos)
+        scrollbar3 = tk.Scrollbar(frameProductosVencidos, orient="vertical")
+        scrollbar3.config(command=listbox3.yview)
+        listbox3.config(yscrollcommand=scrollbar3.set)
+        scrollbar3.pack(side="right", fill="y")
+        listbox3.pack(side="left", fill="both", expand=True)
+
+        listbox4 = tk.Listbox(frameProductosPorVencer)
+        scrollbar4 = tk.Scrollbar(frameProductosPorVencer, orient="vertical")
+        scrollbar4.config(command=listbox4.yview)
+        listbox4.config(yscrollcommand=scrollbar4.set)
+        scrollbar4.pack(side="right", fill="y")
+        listbox4.pack(side="left", fill="both", expand=True)
+
+        bontonParaContinuar = tk.Button(self.segundaventana.frameProceso)
+
+        botonParaEliminar = tk.Button(self.segundaventana.frameProceso)
+        botonParaDescuentos = tk.Button(self.segundaventana.frameProceso)
 
     def terceraFuncion(self):
         self.lista1 = []
@@ -542,15 +806,9 @@ class Aplicacion():
         frame_productos.grid(row=3, column=0, columnspan=2, pady=10, padx=5, sticky="nsew")
 
 
-
-
-
-
-
     def MostrarVentanaPrincipal(self, primerventana, segundaventana):
         primerventana.withdraw()
         segundaventana.deiconify()
-
 
     def mostrarFucionalidades(self, NombreProceso, DescripcionProceso):
         self.segundaventana.labelInformativo.pack_forget()
@@ -567,9 +825,10 @@ class Aplicacion():
 
         self.segundaventana.frameProceso.grid(row=2, column=0, sticky="n", pady=(2.5, 5), padx=5)
 
-
     def configurarBoton(self, ventana, ventana2):
         ventana.botonP4.config(command=lambda: self.MostrarVentanaPrincipal(ventana, ventana2))
+
+    
 
 
 class main():
