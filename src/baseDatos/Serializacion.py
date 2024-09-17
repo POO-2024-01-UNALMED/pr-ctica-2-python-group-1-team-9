@@ -3,6 +3,17 @@ from gestorAplicacion.Supermercado import Supermercado
 from gestorAplicacion.Producto import Producto
 from gestorAplicacion.Descuento import Descuento
 import pickle
+import os
+import sys
+
+def resource_path(relative_path):
+    """ Obtiene la ruta absoluta del recurso, considerando si estamos empaquetados o no. """
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class Serializacion:
 

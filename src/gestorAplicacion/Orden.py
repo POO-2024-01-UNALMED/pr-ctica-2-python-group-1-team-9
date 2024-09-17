@@ -18,22 +18,22 @@ class Orden:
     def agregarProducto(self, supermercado, producto, cantidad):
         while cantidad > 0:
             for unidad in producto.unidades:
-                if not unidad.oferta and unidad.ubicacion.supermercado == supermercado:
+                if not unidad.oferta and unidad.getUbicacion().getSupermercado() == supermercado:
                     self.productos.append(unidad)
-                    unidad.tipo.quitarUnidad(unidad)
-                    unidad.ubicacion.quitarProducto(unidad)
+                    unidad.getTipo().quitarUnidad(unidad)
+                    unidad.getUbicacion().quitarProducto(unidad)
                     cantidad -= 1
                     break
 
     def agregarUnidad(self, unidad):
         self.productos.append(unidad)
-        unidad.tipo.quitarUnidad(unidad)
-        unidad.ubicacion.quitarProducto(unidad)
+        unidad.getTipo().quitarUnidad(unidad)
+        unidad.getUbicacion().quitarProducto(unidad)
 
     def quitarUnidad(self, unidad):
         self.productos.remove(unidad)
-        unidad.tipo.agregarUnidad(unidad, unidad.ubicacion)
-        unidad.ubicacion.agregarProducto(unidad)
+        unidad.getTipo().agregarUnidad(unidad, unidad.getUbicacion())
+        unidad.getUbicacion().agregarProducto(unidad)
 
     def calcularPrecioTotal(self):
         total = sum(unidad.calcularPrecio() for unidad in self.productos)
@@ -44,9 +44,10 @@ class Orden:
 
     def cancelarOrden(self):
         for unidad in self.productos:
-            unidad.tipo.agregarUnidad(unidad, unidad.ubicacion)
-            unidad.ubicacion.agregarProducto(unidad)
+            unidad.getTipo().agregarUnidad(unidad, unidad.getUbicacion())
+            unidad.getUbicacion().agregarProducto(unidad)
         self.productos = None
+        Orden.actual_id -= 1
 
     def setSupermercado(self, supermercado):
         self.supermercado = supermercado

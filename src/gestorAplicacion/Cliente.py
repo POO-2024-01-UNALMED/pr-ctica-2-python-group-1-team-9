@@ -2,9 +2,8 @@ from gestorAplicacion.Persona import Persona
 from gestorAplicacion.Supermercado import Supermercado
 
 class Cliente(Persona):
-    def __init__(self, nombre, cedula, supermercado):
+    def __init__(self, nombre, cedula):
         super().__init__(nombre, cedula, "Cliente")
-        self._supermercado = supermercado
         self._ordenes = []
         self._puntos = 0
 
@@ -34,4 +33,4 @@ class Cliente(Persona):
         return self._supermercado
 
     def __str__(self):
-        return f"Cliente con nombre {self.nombre}, cédula {self.cedula}, y supermercado {self._supermercado.getNombre()}"
+        return f"Cliente con nombre {self.nombre} y cédula {self.cedula}."

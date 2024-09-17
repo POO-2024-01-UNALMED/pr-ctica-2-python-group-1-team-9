@@ -2,6 +2,9 @@ import os
 import tkinter as tk
 from PIL import Image, ImageTk
 from baseDatos.Serializacion import Serializacion
+import os
+import sys
+
 
 class VentanaInicio(tk.Tk):
 
@@ -12,11 +15,12 @@ class VentanaInicio(tk.Tk):
         self.geometry("1000x550+284+72")
         self.grid_propagate(False) # grid_propagate o pack_propagate hace que el contenedor se ajuste o no a su contenido"
         self.protocol("WM_DELETE_WINDOW", self.serializarAlCerrarLaVentana)
+        self.iconbitmap("src\psups.ico")
 
         self.hojasDeVida = [
             "Soy Jose Manuel, tengo 20 años, soy de Pueblorrico, un pequeño municipio de Antioquia, me gusta mucho salir a caminar y pasar tiempo en familia, este es mi primer semestre en la carrera (me traslade desde mecánica) y estoy entusiamado por aprender 😀",
             "Mi nombre es Oscar Daniel, nací en el municipio de Itaguí y estoy en el segundo semestre de Ingeniería de sistemas en la Universidad Nacional de Colombia sede Medellín, mi objetivo es convertirme en el mejor entrenador pokem... digo aprender mucho...", 
-            "Hoja de vida de Simon", 
+            "Hola me llamo Simon, soy de Bogotá DC y me siento muy orgulloso de mis raíces, pero estoy muy felíz viviendo en Medellín y estudiando en la nacional", 
             "Mi nombre es Julian David, tengo 18 años y nací en Sincelejo Sucre, me gusta mucho escuchar musica jugar futbol y aprender cosas nuevas, empecé en ingenieria de sistemas por el amor que le tengo a la compuacion y  me apasiona todo lo que tenga que ver con eso ;)"
         ]
         
@@ -48,8 +52,6 @@ class VentanaInicio(tk.Tk):
         self.booleanaP4 = True
 
         # Para indicar la ruta donde están las fotos
-        self.directorioActual = os.path.dirname(os.path.dirname(__file__))
-        self.rutaFotos = os.path.join(self.directorioActual, "fotos")
 
         self.inicializarRutasFotos() # Se inicializa la lista que contiene las rutas a las fotos
 
@@ -72,12 +74,12 @@ class VentanaInicio(tk.Tk):
 
     def inicializarRutasFotos(self): # Funcion para crear todas las rutas a las fotos que van en el frameP6
         self.rutasFotos = [
-            [os.path.join(self.rutaFotos, f"p61{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
-            [os.path.join(self.rutaFotos, f"p62{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
-            [os.path.join(self.rutaFotos, f"p63{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
-            [os.path.join(self.rutaFotos, f"p64{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p61{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p62{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p63{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p64{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
         ]
-        self.rutasFotosP4 = [os.path.join(self.rutaFotos, f"p4{i}.jpg") for i in range(1,6)]
+        self.rutasFotosP4 = [os.path.join(f"src/fotos/p4{i}.jpg") for i in range(1,6)]
 
     def crearFrames(self): # Se crean los dos frames grandes p1 y p2 y luego se llaman las funciones para los frames internos
         # Frame P1 (izquierda)
@@ -321,5 +323,5 @@ class VentanaInicio(tk.Tk):
         self.contador = (self.contador + 1) % 4
     
     def serializarAlCerrarLaVentana(self):
-        #Serializacion.serializar()
+        Serializacion.serializar()
         self.destroy()
