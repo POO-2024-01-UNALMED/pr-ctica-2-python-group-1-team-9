@@ -259,7 +259,7 @@ class Aplicacion():
                         raise ValueError(ExceptionSugerida2())
                     if not re.match("^[A-Za-záéíóúÁÉÍÓÚñÑüÜ ]+$", nombre):
                         raise ValueError(ExceptionSugerida1())
-                    if not re.match("^\d+$", cedula):
+                    if not re.match(r"^\d+$", cedula):
                         raise ValueError(ExceptionSugerida1())
                     if len(cedula) > 15:
                         raise ValueError(ExceptionInventada1())
@@ -366,7 +366,7 @@ class Aplicacion():
                     if entrada.get() is None or entrada.get() == "":
                         raise ExceptionSugerida2()
 
-                if not re.match("^\d+$", primmerFieldFrame.entradas[0].get()):
+                if not re.match(r"^\d+$", primmerFieldFrame.entradas[0].get()):
                     raise ExceptionSugerida1()
                 
                 rangodias = int(primmerFieldFrame.entradas[0].get())
@@ -387,7 +387,7 @@ class Aplicacion():
                     if frame.entradas[3].get() is None or frame.entradas[3].get() == "":
                         raise ExceptionSugerida2()
 
-                    if not re.match("^\d+$", frame.entradas[3].get()):
+                    if not re.match(r"^\d+$", frame.entradas[3].get()):
                         raise ExceptionSugerida1()
                     
                     if int(frame.entradas[3].get()) > 0:

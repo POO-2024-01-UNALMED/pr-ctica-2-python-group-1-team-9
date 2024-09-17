@@ -3,15 +3,26 @@ from gestorAplicacion.Supermercado import Supermercado
 from gestorAplicacion.Producto import Producto
 from gestorAplicacion.Descuento import Descuento
 import pickle
+import os
+import sys
+
+def resource_path(relative_path):
+    """ Obtiene la ruta absoluta del recurso, considerando si estamos empaquetados o no. """
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class Serializacion:
 
     @classmethod
     def deserializar(cls):
-        pkldescuentos = open("src/baseDatos/descuentos.pkl", "rb")
-        pklpersonas = open("src/baseDatos/personas.pkl", "rb")
-        pklproductos = open("src/baseDatos/productos.pkl", "rb")
-        pklsupermercados = open("src/baseDatos/supermercados.pkl", "rb")
+        pkldescuentos = open(resource_path("src/baseDatos/descuentos.pkl"), "rb")
+        pklpersonas = open(resource_path("src/baseDatos/personas.pkl"), "rb")
+        pklproductos = open(resource_path("src/baseDatos/productos.pkl"), "rb")
+        pklsupermercados = open(resource_path("src/baseDatos/supermercados.pkl"), "rb")
         try:
             Descuento.setDescuentos(pickle.load(pkldescuentos))
         except EOFError:
@@ -35,10 +46,10 @@ class Serializacion:
 
     @classmethod
     def serializar(cls):
-        pkldescuentos = open("src/baseDatos/descuentos.pkl", "wb")
-        pklpersonas = open("src/baseDatos/personas.pkl", "wb")
-        pklproductos = open("src/baseDatos/productos.pkl", "wb")
-        pklsupermercados = open("src/baseDatos/supermercados.pkl", "wb")
+        pkldescuentos = open(resource_path("src/baseDatos/descuentos.pkl"), "wb")
+        pklpersonas = open(resource_path("src/baseDatos/personas.pkl"), "wb")
+        pklproductos = open(resource_path("src/baseDatos/productos.pkl"), "wb")
+        pklsupermercados = open(resource_path("src/baseDatos/supermercados.pkl"), "wb")
         descuentos = Descuento.getDescuentos()
         personas = Persona.getPersonas()
         productos = Producto.getListaProductos()
