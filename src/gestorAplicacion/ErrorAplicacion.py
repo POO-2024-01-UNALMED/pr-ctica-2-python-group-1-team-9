@@ -51,3 +51,8 @@ class ExceptionInventada4(ExceptionC2):
 class ExceptionSugerida2(ExceptionC2):
     def __init__(self):
         super().__init__("Por favor rellene todos los campos.")
+
+class ExceptionInventada5(ExceptionC2):
+    def __init__(self):
+        super().__init__("La orden se encuentra vacía.")
+

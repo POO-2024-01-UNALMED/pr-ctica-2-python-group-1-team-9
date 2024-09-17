@@ -102,16 +102,20 @@ class Aplicacion():
 
                 def agregar():
                     selected_item = listbox1.curselection()
-                    self.orden.agregarUnidad(self.lista_unidades[selected_item[0]])
-                    del self.lista_unidades[selected_item[0]]
-                    listbox1.delete(0, tk.END)
-                    for uni in self.prodsel.getUnidades():
-                        if uni.getUbicacion().getSupermercado().getNombre() == self.orden.getSupermercado().getNombre():
-                            self.lista_unidades.append(uni)
-                            if uni.isOferta():
-                                listbox1.insert("end", f"{uni.getTipo().getNombre()} {uni.calcularOferta().getNombre()}({uni.calcularOferta().getPorcentajeDescuento()}%) ${uni.calcularPrecio()}")         
-                            else:
-                                listbox1.insert("end", f"{uni.getTipo().getNombre()} ${uni.calcularPrecio()}")
+                    try:
+                        self.orden.agregarUnidad(self.lista_unidades[selected_item[0]])
+                        del self.lista_unidades[selected_item[0]]
+                        listbox1.delete(0, tk.END)
+                        for uni in self.prodsel.getUnidades():
+                            if uni.getUbicacion().getSupermercado().getNombre() == self.orden.getSupermercado().getNombre():
+                                self.lista_unidades.append(uni)
+                                if uni.isOferta():
+                                    listbox1.insert("end", f"{uni.getTipo().getNombre()} {uni.calcularOferta().getNombre()}({uni.calcularOferta().getPorcentajeDescuento()}%) ${uni.calcularPrecio()}")         
+                                else:
+                                    listbox1.insert("end", f"{uni.getTipo().getNombre()} ${uni.calcularPrecio()}")
+                    except IndexError:
+                        messagebox.showwarning("Advertencia", "No se ha seleccionado ninguna unidad de la lista.")
+                        
 
                 self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
                 self.segundaventana.labelDescripcionProceso.config(text="Seleccione los valores correspondientes en cada una de las listas desplegables, luego seleccione una unidad de la lista de la derecha y presione el botón Agregar Producto para agregarlo a la orden.")
@@ -144,6 +148,38 @@ class Aplicacion():
                 tk.Button(frame_combos, text="Agregar Producto", command=agregar).grid(row=2, column=0, pady=5, padx=5, sticky="e")
                 tk.Button(frame_combos, text="Regresar al menú anterior", command=regresar).grid(row=2, column=1, pady=5, padx=5, sticky="e")
 
+            def quitarProducto():
+                pass
+
+            def completarOrden():
+                try:
+                    if len(self.orden.getProductos()) != 0:
+                        self.orden.completarOrden()
+                        messagebox.showinfo("Orden Completada", "La orden se completó con éxito.")
+                        self.segundaventana.limpiarFrame(self.segundaventana.frameDeInteraccion)
+                        self.segundaventana.crearLabelInformativo()
+                        self.segundaventana.crearFrames()
+
+                    else:
+                        raise ExceptionInventada5()
+                except ExceptionInventada5 as e:
+                    messagebox.showwarning("Advertencia", str(e))
+
+            def cancelarOrden():
+                if len(self.orden.getProductos())==0:
+                    self.orden.cancelarOrden()
+                    messagebox.showinfo("Orden Cancelada", "La orden se canceló.")
+                    self.segundaventana.limpiarFrame(self.segundaventana.frameDeInteraccion)
+                    self.segundaventana.crearLabelInformativo()
+                    self.segundaventana.crearFrames()
+                else:
+                    if messagebox.askyesno("Advertencia", "¿Desea cancelar la orden y regresar todos los productos?."):
+                        self.orden.cancelarOrden()
+                        messagebox.showinfo("Orden Cancelada", "La orden se canceló.")
+                        self.segundaventana.limpiarFrame(self.segundaventana.frameDeInteraccion)
+                        self.segundaventana.crearLabelInformativo()
+                        self.segundaventana.crearFrames()
+
             def menu():
                 self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
                 self.segundaventana.labelDescripcionProceso.config(text=f"Orden id: {orden.getId()}\nSupermercado: {orden.getSupermercado().getNombre()}\nEmpleado: {orden.getEmpleado().getNombre()}\nCliente: {orden.getCliente().getNombre()}")
@@ -168,9 +204,9 @@ class Aplicacion():
 
                 # Botones
                 tk.Button(frame_botones, text="Agregar Productos", command=agregarProducto).grid(row=0, column=0, pady=10, padx=10)
-                tk.Button(frame_botones, text="Quitar Productos", command=crearOrden).grid(row=1, column=0, pady=10, padx=10)
-                tk.Button(frame_inferior, text="Completar Orden", command=crearOrden).grid(row=0, column=0, sticky="e", pady=10, padx=10)
-                tk.Button(frame_inferior, text="Cancelar Orden", command=crearOrden).grid(row=0, column=1, sticky="w", pady=10, padx=10)
+                tk.Button(frame_botones, text="Quitar Productos", command=quitarProducto).grid(row=1, column=0, pady=10, padx=10)
+                tk.Button(frame_inferior, text="Completar Orden", command=completarOrden).grid(row=0, column=0, sticky="e", pady=10, padx=10)
+                tk.Button(frame_inferior, text="Cancelar Orden", command=cancelarOrden).grid(row=0, column=1, sticky="w", pady=10, padx=10)
 
                 for i, unidad in enumerate(self.orden.getProductos(), start=1):
                     if not unidad.isOferta():

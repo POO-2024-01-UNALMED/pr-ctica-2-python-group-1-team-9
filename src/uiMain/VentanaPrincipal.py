@@ -14,9 +14,8 @@ class VentanaPrincipal(tk.Toplevel):
 
         self.frameDeInteraccion = tk.Frame(self, bg="gray90")
         self.frameDeInteraccion.pack(expand=True,fill="both",padx=10,pady=10)
-        self.labelInformativo = tk.Label(self.frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
-        self.labelInformativo.pack(expand=True, fill = "both")
 
+        self.crearLabelInformativo()
         self.crearFrames()
 
         self.menuBar = tk.Menu(self)
@@ -26,6 +25,10 @@ class VentanaPrincipal(tk.Toplevel):
         self.menuAyuda = tk.Menu(self.menuBar,tearoff=0)
         
     #frame = FieldFrame(frameDeInteraccion,tituloCriterios = "",criterios = ["nombre","apellido"], tituloValores = "",valores = None, habilitado = None)
+
+    def crearLabelInformativo(self):
+        self.labelInformativo = tk.Label(self.frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
+        self.labelInformativo.pack(expand=True, fill = "both")
 
     def crearFrames(self):
         self.frameNombreProceso = tk.Frame(self.frameDeInteraccion, bd=3, relief="raised")
