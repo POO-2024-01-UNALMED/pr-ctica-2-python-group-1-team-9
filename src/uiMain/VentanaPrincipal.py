@@ -9,6 +9,7 @@ class VentanaPrincipal(tk.Toplevel):
         self.title("Plataforma Super Usable Para Supermercados (PSUPS)")
         self.geometry("1000x750+50+0")
         self.protocol("WM_DELETE_WINDOW", self.regresarVentanaInicio) #Si se cierra la ventana se muestra la primera y se oculta la segunda.
+        self.iconbitmap("src\psups.ico")
 
         self.config(background="black", border=6, relief= "groove")
 
