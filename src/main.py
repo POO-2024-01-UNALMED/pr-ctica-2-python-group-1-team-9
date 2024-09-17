@@ -204,153 +204,148 @@ class Aplicacion():
         combosup.bind("<<ComboboxSelected>>", supSelect)
         combosup.grid(row=0, column=1, pady=5, padx=5, sticky="w")
 
-    def terceraFuncion(self):
-        self.mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
-        self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
 
-        # Frame principal
+    def terceraFuncion(self):
+        self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
+        self.mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
+        
+        def supSelect(event):
+            selected_sup = self.combosup1.get()  # Primer supermercado seleccionado
+            lista_filtrada = [sup.getNombre() for sup in Supermercado.getSupermercados() if sup.getNombre() != selected_sup]
+            self.combosup2.config(values=lista_filtrada)
+            self.combosup2.set('')
+
+        def mostrar_productos():
+            self.limpiarFrame(self.frame_productos)
+            # Limpiar el frame de productos antes de agregar nuevos elementos
+            self.limpiarFrame(self.frame_productos)
+
+            nombre_sup1 = self.combosup1.get()
+            nombre_sup2 = self.combosup2.get()
+            
+            supermercado1 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup1), None)
+            supermercado2 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup2), None)
+
+            try:
+                if not supermercado1 or not supermercado2:
+                    raise ExceptionInventada3() 
+                
+                frame_supermercado1 = tk.Frame(self.frame_productos)
+                frame_supermercado1.pack(side="left", fill="y", padx=10, pady=10)
+
+                self.listbox1 = tk.Listbox(frame_supermercado1, width=40, height=15)
+                scrollbar1 = tk.Scrollbar(frame_supermercado1, orient="vertical")
+                scrollbar1.config(command=self.listbox1.yview)
+                self.listbox1.config(yscrollcommand=scrollbar1.set)
+                scrollbar1.pack(side="right", fill="y")
+                self.listbox1.pack(side="left", fill="both", expand=True)
+
+                # Agregar productos del supermercado 1 a la lista
+                for bodega in supermercado1.getBodegas():
+                    for unidad in bodega.getProductos():
+                        dias_vencimiento = unidad.diasParaVencimiento()
+                        self.listbox1.insert("end", f"{unidad.getTipo().getNombre()} // Días para vencimiento: {dias_vencimiento}")
+
+                frame_flechas = tk.Frame(self.frame_productos)
+                frame_flechas.pack(side="left", padx=10, pady=10)
+
+                boton_derecha = tk.Button(frame_flechas, text="-->", command=lambda: mover_producto(self.listbox1, self.listbox2))
+                boton_derecha.pack(pady=5)
+
+                boton_izquierda = tk.Button(frame_flechas, text="<--", command=lambda: mover_producto(self.listbox2, self.listbox1))
+                boton_izquierda.pack(pady=5)
+
+                frame_supermercado2 = tk.Frame(self.frame_productos)
+                frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
+
+                self.listbox2 = tk.Listbox(frame_supermercado2, width=40, height=15)
+                scrollbar2 = tk.Scrollbar(frame_supermercado2, orient="vertical")
+                scrollbar2.config(command=self.listbox2.yview)
+                self.listbox2.config(yscrollcommand=scrollbar2.set)
+                scrollbar2.pack(side="right", fill="y")
+                self.listbox2.pack(side="left", fill="both", expand=True)
+
+                # Agregar productos del supermercado 2 a la lista
+                for bodega in supermercado2.getBodegas():
+                    for unidad in bodega.getProductos():
+                        dias_vencimiento = unidad.diasParaVencimiento()
+                        self.listbox2.insert("end", f"{unidad.getTipo().getNombre()} // Días para vencimiento: {dias_vencimiento}")
+
+            except ExceptionInventada3 as e:
+                messagebox.showwarning("Advertencia", str(e))
+
+        def confirmar_intercambio():
+            supermercado1 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == self.combosup1.get()), None)
+            supermercado2 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == self.combosup2.get()), None)
+
+            try:
+                if not supermercado1 or not supermercado2:
+                    raise ExceptionInventada3()
+
+                confirmacion = messagebox.askyesno("Confirmar", "¿Desea intercambiar productos entre los supermercados?")
+                if confirmacion:
+                    listbox1 = self.listbox1
+                    listbox2 = self.listbox2
+
+                    productos_supermercado1 = [listbox1.get(i) for i in range(listbox1.size())]
+                    productos_supermercado2 = [listbox2.get(i) for i in range(listbox2.size())]
+
+                    print(f"{len(productos_supermercado1)}")
+                    print(f"{len(productos_supermercado2)}")
+
+                    supermercado1_bodegas = [bodega for bodega in supermercado1.getBodegas()]
+                    supermercado2_bodegas = [bodega for bodega in supermercado2.getBodegas()]
+
+                    for bodega in supermercado1_bodegas:
+                        bodega.getProductos().clear()
+                        for prod in productos_supermercado2:
+                            bodega.agregarProducto(prod)
+
+                    for bodega in supermercado2_bodegas:
+                        bodega.getProductos().clear()
+                        for prod in productos_supermercado1:
+                            bodega.agregarProducto(prod)
+
+                    messagebox.showinfo("Intercambio", f"Intercambio confirmado entre {supermercado1.getNombre()} y {supermercado2.getNombre()}")
+
+            except ExceptionInventada3 as e:
+                messagebox.showwarning("Advertencia", str(e))
+
+        def mover_producto(source_listbox, target_listbox):
+            selected_item = source_listbox.curselection()
+
+            try:
+                if not selected_item:
+                    raise ExceptionInventada3("No se ha seleccionado ningún producto para mover.")
+                
+                producto = source_listbox.get(selected_item)
+                target_listbox.insert("end", producto)
+                source_listbox.delete(selected_item)
+                
+            except ExceptionInventada3 as e:
+                messagebox.showwarning("Advertencia", str(e))
+
         self.frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
         self.frame1.pack(expand=True, fill="both", padx=10, pady=10)
         self.frame1.grid_columnconfigure(0, weight=1)
         self.frame1.grid_columnconfigure(1, weight=1)
 
-        # Combobox 1: Seleccionar primer supermercado
         tk.Label(self.frame1, text="Supermercado").grid(row=0, column=0, pady=5, padx=5, sticky="e")
         lista = [supermercado.getNombre() for supermercado in Supermercado.getSupermercados()]
         self.combosup1 = ttk.Combobox(self.frame1, values=lista, state="readonly")
-        self.combosup1.bind("<<ComboboxSelected>>", self.supSelect)
+        self.combosup1.bind("<<ComboboxSelected>>", supSelect)
         self.combosup1.grid(row=0, column=1, pady=5, padx=5, sticky="w")
 
-        # Combobox 2: Seleccionar otro supermercado (excluye el seleccionado en el primero)
         tk.Label(self.frame1, text="Otro Supermercado").grid(row=1, column=0, pady=5, padx=5, sticky="e")
         self.combosup2 = ttk.Combobox(self.frame1, values=[], state="readonly")
         self.combosup2.grid(row=1, column=1, pady=5, padx=5, sticky="w")
 
-        # Botones para mostrar productos y confirmar intercambio
-        tk.Button(self.frame1, text="Mostrar Productos", command=self.mostrar_productos).grid(row=2, column=0, pady=10, padx=5, sticky="e")
-        tk.Button(self.frame1, text="Confirmar Intercambio", command=self.confirmar_intercambio).grid(row=2, column=1, pady=10, padx=5, sticky="w")
+        tk.Button(self.frame1, text="Mostrar Productos", command=mostrar_productos).grid(row=2, column=0, pady=10, padx=5, sticky="e")
+        tk.Button(self.frame1, text="Confirmar Intercambio", command=confirmar_intercambio).grid(row=2, column=1, pady=10, padx=5, sticky="w")
 
-        # Frame para mostrar productos
         self.frame_productos = tk.Frame(self.frame1)
         self.frame_productos.grid(row=3, column=0, columnspan=2, pady=10, padx=5, sticky="nsew")
 
-
-    def supSelect(self, event):
-        selected_sup = self.combosup1.get()
-        lista_filtrada = [sup.getNombre() for sup in Supermercado.getSupermercados() if sup.getNombre() != selected_sup]
-
-        self.combosup2.config(values=lista_filtrada)
-        self.combosup2.set('')
-
-
-    def mostrar_productos(self):
-        # Limpiar el frame de productos anterior
-        self.limpiarFrame(self.frame_productos)
-
-        nombre_sup1 = self.combosup1.get()
-        nombre_sup2 = self.combosup2.get()
-        
-        supermercado1 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup1), None)
-        supermercado2 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup2), None)
-
-        try:
-            if not supermercado1 or not supermercado2:
-                raise ExceptionInventada3("Uno o ambos supermercados no existen.")
-
-            # Mostrar productos del primer supermercado
-            frame_supermercado1 = tk.Frame(self.frame_productos)
-            frame_supermercado1.pack(side="left", fill="y", padx=10, pady=10)
-            self.listbox1 = tk.Listbox(frame_supermercado1, width=40, height=15)
-            scrollbar1 = tk.Scrollbar(frame_supermercado1, orient="vertical")
-            scrollbar1.config(command=self.listbox1.yview)
-            self.listbox1.config(yscrollcommand=scrollbar1.set)
-            scrollbar1.pack(side="right", fill="y")
-            self.listbox1.pack(side="left", fill="both", expand=True)
-
-            productos1_presentes = False
-            for bodega in supermercado1.getBodegas():
-                for unidad in bodega.getProductos():
-                    if hasattr(unidad, 'getTipo') and hasattr(unidad.getTipo(), 'getNombre'):
-                        dias_vencimiento = unidad.diasParaVencimiento()
-                        self.listbox1.insert("end", f"{unidad.getTipo().getNombre()} // Días para vencimiento: {dias_vencimiento}")
-                        productos1_presentes = True
-            # Frame para flechas
-            frame_flechas = tk.Frame(self.frame_productos)
-            frame_flechas.pack(side="left", padx=10, pady=10)
-            boton_derecha = tk.Button(frame_flechas, text="-->", command=lambda: self.mover_producto(self.listbox1, self.listbox2))
-            boton_derecha.pack(pady=5)
-            boton_izquierda = tk.Button(frame_flechas, text="<--", command=lambda: self.mover_producto(self.listbox2, self.listbox1))
-            boton_izquierda.pack(pady=5)
-
-            if not productos1_presentes:
-                self.listbox1.insert("end", "No hay productos disponibles.")
-
-            # Mostrar productos del segundo supermercado
-            frame_supermercado2 = tk.Frame(self.frame_productos)
-            frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
-            self.listbox2 = tk.Listbox(frame_supermercado2, width=40, height=15)
-            scrollbar2 = tk.Scrollbar(frame_supermercado2, orient="vertical")
-            scrollbar2.config(command=self.listbox2.yview)
-            self.listbox2.config(yscrollcommand=scrollbar2.set)
-            scrollbar2.pack(side="right", fill="y")
-            self.listbox2.pack(side="left", fill="both", expand=True)
-
-            productos2_presentes = False
-            for bodega in supermercado2.getBodegas():
-                for unidad in bodega.getProductos():
-                    if hasattr(unidad, 'getTipo') and hasattr(unidad.getTipo(), 'getNombre'):
-                        dias_vencimiento = unidad.diasParaVencimiento()
-                        self.listbox2.insert("end", f"{unidad.getTipo().getNombre()} // Días para vencimiento: {dias_vencimiento}")
-                        productos2_presentes = True
-
-            if not productos2_presentes:
-                self.listbox2.insert("end", "No hay productos disponibles.")
-
-        except ExceptionInventada3 as e:
-            messagebox.showwarning("Advertencia", str(e))
-
-
-    def mover_producto(self, listbox_origen, listbox_destino):
-        seleccion = listbox_origen.curselection()
-
-        if seleccion:
-            indice = seleccion[0]
-            texto_producto = listbox_origen.get(indice)
-
-            listbox_destino.insert("end", texto_producto)
-            listbox_origen.delete(indice)
-
-
-    def confirmar_intercambio(self):
-        nombre_sup1 = self.combosup1.get()
-        nombre_sup2 = self.combosup2.get()
-
-        supermercado1 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup1), None)
-        supermercado2 = next((sup for sup in Supermercado.getSupermercados() if sup.getNombre() == nombre_sup2), None)
-
-        if not supermercado1 or not supermercado2:
-            messagebox.showwarning("Advertencia", "Debe seleccionar dos supermercados.")
-            return
-
-        productos_a_mover_sup1 = [self.listbox1.get(i) for i in range(self.listbox1.size())]
-        productos_a_mover_sup2 = [self.listbox2.get(i) for i in range(self.listbox2.size())]
-
-        # Depuración: mostrar la longitud de las listas
-        print(f"Productos en {nombre_sup1} a mover: {len(productos_a_mover_sup1)}")
-        print(f"Productos en {nombre_sup2} a mover: {len(productos_a_mover_sup2)}")
-
-        # Realizar intercambio de productos
-        for bodega in supermercado1.getBodegas():
-            bodega.getProductos().clear()  # Limpiar productos en la bodega
-            for producto in productos_a_mover_sup2:
-                bodega.agregarProducto(producto)  # Asegúrate de que este método exista
-
-        for bodega in supermercado2.getBodegas():
-            bodega.getProductos().clear()  # Limpiar productos en la bodega
-            for producto in productos_a_mover_sup1:
-                bodega.agregarProducto(producto)  # Asegúrate de que este método exista
-
-        messagebox.showinfo("Intercambio realizado", "El intercambio de productos se ha realizado con éxito.")
 
 
 
