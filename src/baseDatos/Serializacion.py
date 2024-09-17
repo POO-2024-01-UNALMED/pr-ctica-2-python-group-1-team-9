@@ -19,10 +19,10 @@ class Serializacion:
 
     @classmethod
     def deserializar(cls):
-        pkldescuentos = open(resource_path("src/baseDatos/descuentos.pkl"), "rb")
-        pklpersonas = open(resource_path("src/baseDatos/personas.pkl"), "rb")
-        pklproductos = open(resource_path("src/baseDatos/productos.pkl"), "rb")
-        pklsupermercados = open(resource_path("src/baseDatos/supermercados.pkl"), "rb")
+        pkldescuentos = open("src/baseDatos/descuentos.pkl", "rb")
+        pklpersonas = open("src/baseDatos/personas.pkl", "rb")
+        pklproductos = open("src/baseDatos/productos.pkl", "rb")
+        pklsupermercados = open("src/baseDatos/supermercados.pkl", "rb")
         try:
             Descuento.setDescuentos(pickle.load(pkldescuentos))
         except EOFError:
@@ -46,10 +46,10 @@ class Serializacion:
 
     @classmethod
     def serializar(cls):
-        pkldescuentos = open(resource_path("src/baseDatos/descuentos.pkl"), "wb")
-        pklpersonas = open(resource_path("src/baseDatos/personas.pkl"), "wb")
-        pklproductos = open(resource_path("src/baseDatos/productos.pkl"), "wb")
-        pklsupermercados = open(resource_path("src/baseDatos/supermercados.pkl"), "wb")
+        pkldescuentos = open("src/baseDatos/descuentos.pkl", "wb")
+        pklpersonas = open("src/baseDatos/personas.pkl", "wb")
+        pklproductos = open("src/baseDatos/productos.pkl", "wb")
+        pklsupermercados = open("src/baseDatos/supermercados.pkl", "wb")
         descuentos = Descuento.getDescuentos()
         personas = Persona.getPersonas()
         productos = Producto.getListaProductos()
