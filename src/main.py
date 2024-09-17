@@ -148,9 +148,6 @@ class Aplicacion():
                 tk.Button(frame_combos, text="Agregar Producto", command=agregar).grid(row=2, column=0, pady=5, padx=5, sticky="e")
                 tk.Button(frame_combos, text="Regresar al menú anterior", command=regresar).grid(row=2, column=1, pady=5, padx=5, sticky="e")
 
-            def quitarProducto():
-                pass
-
             def completarOrden():
                 try:
                     if len(self.orden.getProductos()) != 0:
@@ -181,6 +178,20 @@ class Aplicacion():
                         self.segundaventana.crearFrames()
 
             def menu():
+                def quitarProducto():
+                    selected_item = listbox1.curselection()
+                    try:
+                        self.orden.quitarUnidad(self.orden.getProductos()[selected_item[0]])
+                        listbox1.delete(0, tk.END)
+                        for unidad in self.orden.getProductos():
+                            if not unidad.isOferta():
+                                listbox1.insert("end", f"{unidad.getTipo().getNombre()} ${unidad.calcularPrecio()}")
+                            else:
+                                listbox1.insert("end", f"{unidad.getTipo().getNombre()} {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
+
+                    except IndexError:
+                        messagebox.showwarning("Advertencia", "No se ha seleccionado ninguna unidad de la lista.")
+
                 self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
                 self.segundaventana.labelDescripcionProceso.config(text=f"Orden id: {orden.getId()}\nSupermercado: {orden.getSupermercado().getNombre()}\nEmpleado: {orden.getEmpleado().getNombre()}\nCliente: {orden.getCliente().getNombre()}")
                 self.segundaventana.frameProceso.grid_forget()
@@ -204,7 +215,7 @@ class Aplicacion():
 
                 # Botones
                 tk.Button(frame_botones, text="Agregar Productos", command=agregarProducto).grid(row=0, column=0, pady=10, padx=10)
-                tk.Button(frame_botones, text="Quitar Productos", command=quitarProducto).grid(row=1, column=0, pady=10, padx=10)
+                tk.Button(frame_botones, text="Quitar Producto", command=quitarProducto).grid(row=1, column=0, pady=10, padx=10)
                 tk.Button(frame_inferior, text="Completar Orden", command=completarOrden).grid(row=0, column=0, sticky="e", pady=10, padx=10)
                 tk.Button(frame_inferior, text="Cancelar Orden", command=cancelarOrden).grid(row=0, column=1, sticky="w", pady=10, padx=10)
 
