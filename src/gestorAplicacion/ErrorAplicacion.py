@@ -56,3 +56,6 @@ class ExceptionInventada5(ExceptionC2):
     def __init__(self):
         super().__init__("La orden se encuentra vacía.")
 
+class ExceptionInventada6(ExceptionC2):
+    def __init__(self):
+        super().__init__("No se ha seleccionado ningún producto para mover.")
