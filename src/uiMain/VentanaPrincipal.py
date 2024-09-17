@@ -7,12 +7,12 @@ class VentanaPrincipal(tk.Toplevel):
         # Configuración basica de la ventana
         self.primerventana = primerventana
         self.title("Plataforma Super Usable Para Supermercados (PSUPS)")
-        self.geometry("800x750")
+        self.geometry("1000x750+50+0")
         self.protocol("WM_DELETE_WINDOW", self.regresarVentanaInicio) #Si se cierra la ventana se muestra la primera y se oculta la segunda.
 
-        self.config(background="black")
+        self.config(background="black", border=6, relief= "groove")
 
-        self.frameDeInteraccion = tk.Frame(self, bg="gray90")
+        self.frameDeInteraccion = tk.Frame(self, bg="#ffffff")
         self.frameDeInteraccion.pack(expand=True,fill="both",padx=10,pady=10)
 
         self.crearLabelInformativo()
@@ -23,11 +23,9 @@ class VentanaPrincipal(tk.Toplevel):
         self.menuArchivo = tk.Menu(self.menuBar, tearoff=0)
         self.menuProcesosYConsultas = tk.Menu(self.menuBar,tearoff=0)
         self.menuAyuda = tk.Menu(self.menuBar,tearoff=0)
-        
-    #frame = FieldFrame(frameDeInteraccion,tituloCriterios = "",criterios = ["nombre","apellido"], tituloValores = "",valores = None, habilitado = None)
 
     def crearLabelInformativo(self):
-        self.labelInformativo = tk.Label(self.frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
+        self.labelInformativo = tk.Label(self.frameDeInteraccion, wraplength=900, text="-Para empezar, acceda al menú superior a la opcion, 'Procesos y Consultas'.\n\nEncontrará tres opciones:\n\nPrimera opción: 'Administrar inventario', con esta podrá verificar que productos están vencidos y cuales proximos a vencer, eliminar de su inventario los productos vencidos y además hacer descuento sobre los que están proximos a vencer en el lapso de dias establecio en la busqueda.\n\nSegunda opción: 'Generar Orden', con esta función realizará las ordenes de venta, podrá crear clientes, eligiendo que tipo de producto se va a agregar a la orden, con la posibilidad de agregarlos uno a uno.\n\nTercera opción: Intercambio de productos, por medio de esta función, podra darle mejor manejo al inventario en su bodega, trasladando los productos que seleccione de un supermercado a otro.", font=("Arial"))
         self.labelInformativo.pack(expand=True, fill = "both")
 
     def crearFrames(self):
@@ -57,7 +55,7 @@ class VentanaPrincipal(tk.Toplevel):
     def ReiniciarFrameDeInteraccion(self):
         self.limpiarFrame(self.frameDeInteraccion)
         self.crearFrames()
-        self.labelInformativo = tk.Label(self.frameDeInteraccion, bg= "gray50", text="Esta será la info que va al iniciar", font=("Arial"))
+        self.labelInformativo = tk.Label(self.frameDeInteraccion, wraplength=900, text="-Para empezar, acceda al menú superior a la opcion, 'Procesos y Consultas'.\n\nEncontrará tres opciones:\n\nPrimera opción: 'Administrar inventario', con esta podrá verificar que productos están vencidos y cuales proximos a vencer, eliminar de su inventario los productos vencidos y además hacer descuento sobre los que están proximos a vencer en el lapso de dias establecio en la busqueda.\n\nSegunda opción: 'Generar Orden', con esta función realizará las ordenes de venta, podrá crear clientes, eligiendo que tipo de producto se va a agregar a la orden, con la posibilidad de agregarlos uno a uno.\n\nTercera opción: Intercambio de productos, por medio de esta función, podra darle mejor manejo al inventario en su bodega, trasladando los productos que seleccione de un supermercado a otro.", font=("Arial"))
 
     def limpiarFrame(self, frame): # Recorremos todos los widgets dentro del frame y los destruimos
         for widget in frame.winfo_children():

@@ -16,7 +16,7 @@ class VentanaInicio(tk.Tk):
         self.hojasDeVida = [
             "Soy Jose Manuel, tengo 20 años, soy de Pueblorrico, un pequeño municipio de Antioquia, me gusta mucho salir a caminar y pasar tiempo en familia, este es mi primer semestre en la carrera (me traslade desde mecánica) y estoy entusiamado por aprender 😀",
             "Mi nombre es Oscar Daniel, nací en el municipio de Itaguí y estoy en el segundo semestre de Ingeniería de sistemas en la Universidad Nacional de Colombia sede Medellín, mi objetivo es convertirme en el mejor entrenador pokem... digo aprender mucho...", 
-            "Hoja de vida de Simon", 
+            "Hola me llamo simon, gracias.", 
             "Mi nombre es Julian David, tengo 18 años y nací en Sincelejo Sucre, me gusta mucho escuchar musica jugar futbol y aprender cosas nuevas, empecé en ingenieria de sistemas por el amor que le tengo a la compuacion y  me apasiona todo lo que tenga que ver con eso ;)"
         ]
         
@@ -321,5 +321,5 @@ class VentanaInicio(tk.Tk):
         self.contador = (self.contador + 1) % 4
     
     def serializarAlCerrarLaVentana(self):
-        #Serializacion.serializar()
+        Serializacion.serializar()
         self.destroy()

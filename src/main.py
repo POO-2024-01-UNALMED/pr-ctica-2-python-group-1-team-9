@@ -281,9 +281,6 @@ class Aplicacion():
                     except ValueError as e:
                         messagebox.showwarning("Advertencia", f"Error al crear el cliente: {e}")
 
-                            #frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
-                            #frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
-
                 self.limpiarFrame(frame3)
                 tk.Label(frame3, text="Nombre").grid(row=0, column=0, pady=5, padx=5, sticky="e")
                 entryNombre = tk.Entry(frame3)
@@ -297,7 +294,7 @@ class Aplicacion():
                 #tk.Button(frame3, text="Crear Orden", command=crearOrden).grid(row=3, column=0, pady=10, padx=10, columnspan=2)
 
 
-        frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
+        frame1 = tk.Frame(self.segundaventana.frameProceso)
         frame1.pack(expand=True, fill="both", padx=10, pady=10)
         frame1.grid_columnconfigure(0, weight=1)
         frame1.grid_columnconfigure(1, weight=1)
@@ -316,13 +313,13 @@ class Aplicacion():
         comboemp.bind("<<ComboboxSelected>>", empSelect)
         comboemp.grid(row=1, column=1, pady=5, padx=5, sticky="w")
 
-        frame2 = tk.Frame(frame1, bd=2, relief="groove", bg="#ffffff")
+        frame2 = tk.Frame(frame1, bd=2, relief="groove")
         frame2.grid(row=2, column=0, columnspan=2, pady=10, padx=10, sticky="nsew")
         seleccion = tk.IntVar()
         tk.Radiobutton(frame2, text="Cliente Existente", variable=seleccion, value=1, command=onSelect).grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
         tk.Radiobutton(frame2, text="Cliente Nuevo", variable=seleccion, value=2, command=onSelect).grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
         seleccion.set(1)
-        frame3 = tk.Frame(frame2, bg="#ffffff")
+        frame3 = tk.Frame(frame2)
         frame3.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
         onSelect()
 
@@ -399,7 +396,10 @@ class Aplicacion():
                     validarDescuento()
                 
                 else:
-                    print(self.listaAvencer[2].isOferta())
+                    messagebox.showinfo("Información", "Cambios realizados exitosamente")
+                    self.segundaventana.limpiarFrame(self.segundaventana.frameDeInteraccion)
+                    self.segundaventana.crearLabelInformativo()
+                    self.segundaventana.crearFrames()
 
             except ExceptionSugerida2 as e2:
                 messagebox.showwarning("Advertencia",str(e2))
@@ -529,7 +529,7 @@ class Aplicacion():
                         bontonParaContinuar.grid(row=3, column= 0, padx=5, pady=5, columnspan=2)
 
                     else:
-                        messagebox.showinfo("",f"No hay productos vencidos, o proximos a vencer en {rangodias} dias")
+                        messagebox.showinfo("Información",f"No hay productos vencidos, o proximos a vencer en {rangodias} dias")
 
                 else:
                     raise ExceptionSugerida2()
@@ -551,11 +551,12 @@ class Aplicacion():
             for bodega in bodegas:
                 unidades2.append(bodega.getProductos())
             
-            for unidad in unidades2:
-                dias = unidad.diasParaVencimiento()
-                if dias <= rangodias:
-                   unidad.getUbicacion().quitarProducto(unidad)
-                   unidad.getTipo().getUnidades().remove(unidad)
+            for unidades in unidades2:
+                for unidadd in unidades:
+                    dias2 = unidadd.diasParaVencimiento()
+                    if dias2 <= rangodias and dias2 <= 0:
+                        unidadd.getUbicacion().quitarProducto(unidadd)
+                        unidadd.getTipo().getUnidades().remove(unidadd)
 
         def continuarDescuentos(supermercado,rangodias):
             self.mostrarFucionalidades("Administrar inventario", "Administración de inventario. Ingrese el descuento de cada producto proximo a vencer.")
@@ -592,7 +593,7 @@ class Aplicacion():
             validarDescuento()
             
 
-        frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
+        frame1 = tk.Frame(self.segundaventana.frameProceso)
         frame1.grid(row=0, column=0)
         frame1.grid_columnconfigure(0, weight=1)
         frame1.grid_columnconfigure(1, weight=1)
@@ -783,7 +784,7 @@ class Aplicacion():
                 self.segundaventana.crearFrames()
 
 
-        frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
+        frame1 = tk.Frame(self.segundaventana.frameProceso)
         frame1.pack(expand=True, fill="both", padx=10, pady=10)
         frame1.grid_columnconfigure(0, weight=1)
         frame1.grid_columnconfigure(1, weight=1)

@@ -19,7 +19,6 @@ class FieldFrame(Frame):
 
         self.diccionario = {}
         self.entradas = []
-        #self.pack(expand=True,fill="both",padx=10,pady=10)
         tituloCriterios = Label(self, text=tituloCriterios, font=("Arial"))
         tituloCriterios.grid(row=0, column=0, padx=5, pady=5)
         tituloValores = Label(self, text=tituloValores, font=("Arial"))
@@ -43,16 +42,16 @@ class FieldFrame(Frame):
                 entrada.delete(0, tk.END)
             
         self.botonAceptar = tk.Button(self, text="Aceptar", font=("Arial"), command=aceptar)
-        self.botonAceptar.grid(row=(len(criterios)+1), column=0, padx=5, pady=5)
+        self.botonAceptar.grid(row=(len(criterios)+1), column=1, padx=5, pady=5)
 
         self.bontonBorrar = tk.Button(self, text="Borrar", font=("Arial"), command=borrar)
-        self.bontonBorrar.grid(row=(len(criterios)+1), column=1, padx=5, pady=5)
+        self.bontonBorrar.grid(row=(len(criterios)+1), column=0, padx=5, pady=5)
 
         for i, criterio in enumerate(criterios):
             etiqueta = Label(self, text=criterio, font=("Arial"))
             if self.valores is not None:
                 valorinicial = tk.StringVar(value=valores[i])
-                entrada = Entry(self, font=("Arial"), textvariable=valorinicial)
+                entrada = Entry(self, font=("Arial"), textvariable=valorinicial, border=2)
                 if (self.habilitado[i] is not None) and (self.habilitado[i] != ""):
                     entrada.config(state="disabled")
             else:
@@ -66,22 +65,3 @@ class FieldFrame(Frame):
             
             # Guardamos las entradas en el diccionario
             self.diccionario[criterio] = entrada
-
-    
-
-      
-"""crea un nuevo objeto de tipo FieldFrame
-@arg tituloCriterios titulo para la columna "Criterio"
-@arg criterios array con los nombres de los criterios
-@arg tituloValores titulo para la columna "valor"
-@arg valores array con los valores iniciales; Si ‘None’, no hay valores iniciales
-@arg habilitado array con los campos no-editables por el usuario; Si ‘None’, todos son editables
-*/
-def __init__(self, tituloCriterios, criterios, tituloValores, valores, habilitado):
-...
-/**
-@arg criterio el criterio cuyo valor se quiere obtener
-@return el valor del criterio cuyo nombre es ’criterio’
-*/
-def getValue(self, criterio):
-..."""
