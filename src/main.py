@@ -24,11 +24,14 @@ class Aplicacion():
         self.supsel = None
         self.empsel = None
         self.clisel = None
+        self.tipsel = None
+        self.prodsel = None
 
         self.orden = None
 
         self.listasup = []
         self.listacli = []
+        self.lista_unidades = []
 
         self.primerventana = VentanaInicio()
         self.segundaventana = VentanaPrincipal(self.primerventana)
@@ -60,9 +63,127 @@ class Aplicacion():
         def empSelect(event):
             self.empsel = next((persona for persona in Persona.getPersonas() if persona.getNombre() == comboemp.get()), None)
 
+        def menuOrden(orden):
+            def agregarProducto():
+                self.tipsel == None
+
+                def tipSelect(event):
+                    if combotip.get() == "Alimentos":
+                        self.tipsel = TipoProducto.ALIMENTO
+                    elif combotip.get() == "Aseo":
+                        self.tipsel = TipoProducto.ASEO
+                    elif combotip.get() == "Bebidas":
+                        self.tipsel = TipoProducto.BEBIDA
+                    elif combotip.get() == "Cuidado personal":
+                        self.tipsel = TipoProducto.CUIDADOPERSONAL
+                    elif combotip.get() == "Productos para mascotas":
+                        self.tipsel = TipoProducto.MASCOTA
+                    elif combotip.get() == "Otro":
+                        self.tipsel = TipoProducto.OTRO
+
+                    listaprod = [producto.getNombre() for producto in self.orden.getSupermercado().productosPorTipo(self.tipsel)]
+                    comboprod.config(values=listaprod)
+                    comboprod.set("")
+
+                def prodSelect(event):
+                    self.lista_unidades = []
+                    listbox1.delete(0, tk.END)
+                    self.prodsel = next((prod for prod in Producto.getListaProductos() if prod.getNombre() == comboprod.get()), None)
+                    for uni in self.prodsel.getUnidades():
+                        if uni.getUbicacion().getSupermercado().getNombre() == self.orden.getSupermercado().getNombre():
+                            self.lista_unidades.append(uni)
+                            if uni.isOferta():
+                                listbox1.insert("end", f"{uni.getTipo().getNombre()} {uni.calcularOferta().getNombre()}({uni.calcularOferta().getPorcentajeDescuento()}%) ${uni.calcularPrecio()}")         
+                            else:
+                                listbox1.insert("end", f"{uni.getTipo().getNombre()} ${uni.calcularPrecio()}")
+
+                def regresar():
+                    menuOrden(self.orden)
+
+                def agregar():
+                    selected_item = listbox1.curselection()
+                    self.orden.agregarUnidad(self.lista_unidades[selected_item[0]])
+                    del self.lista_unidades[selected_item[0]]
+                    listbox1.delete(0, tk.END)
+                    for uni in self.prodsel.getUnidades():
+                        if uni.getUbicacion().getSupermercado().getNombre() == self.orden.getSupermercado().getNombre():
+                            self.lista_unidades.append(uni)
+                            if uni.isOferta():
+                                listbox1.insert("end", f"{uni.getTipo().getNombre()} {uni.calcularOferta().getNombre()}({uni.calcularOferta().getPorcentajeDescuento()}%) ${uni.calcularPrecio()}")         
+                            else:
+                                listbox1.insert("end", f"{uni.getTipo().getNombre()} ${uni.calcularPrecio()}")
+
+                self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
+                self.segundaventana.labelDescripcionProceso.config(text="Seleccione los valores correspondientes en cada una de las listas desplegables, luego seleccione una unidad de la lista de la derecha y presione el botón Agregar Producto para agregarlo a la orden.")
+                self.segundaventana.frameProceso.grid_forget()
+                self.segundaventana.frameProceso.grid(row=2, column=0, sticky="new", pady=(2.5, 5), padx=5)
+
+                frame_lista = tk.Frame(self.segundaventana.frameProceso, bd=3, relief="raised")
+                frame_combos = tk.Frame(self.segundaventana.frameProceso, bd=3, relief="raised")
+                frame_lista.pack(side="right", fill="both", expand=True)
+                frame_combos.pack(side="left", fill="y")
+
+                listbox1 = tk.Listbox(frame_lista, height=20)
+                scrollbar1 = tk.Scrollbar(frame_lista, orient="vertical")
+                scrollbar1.config(command=listbox1.yview)
+                listbox1.config(yscrollcommand=scrollbar1.set)
+                scrollbar1.pack(side="right", fill="y")
+                listbox1.pack(side="left", fill="both", expand=True)
+
+                tk.Label(frame_combos, text="Tipo de Producto").grid(row=0, column=0, pady=5, padx=5, sticky="e")
+                combotip = ttk.Combobox(frame_combos, values=["Alimentos", "Aseo", "Bebidas", "Cuidado personal", "Productos para mascotas", "Otro"], state="readonly")
+                combotip.bind("<<ComboboxSelected>>", tipSelect)
+                combotip.grid(row=0, column=1, pady=5, padx=5, sticky="w")
+
+                tk.Label(frame_combos, text="Producto").grid(row=1, column=0, pady=5, padx=5, sticky="e")
+                prodvariable = tk.StringVar()
+                comboprod = ttk.Combobox(frame_combos,textvariable=prodvariable, state="readonly")
+                comboprod.bind("<<ComboboxSelected>>", prodSelect)
+                comboprod.grid(row=1, column=1, pady=5, padx=5, sticky="w")
+
+                tk.Button(frame_combos, text="Agregar Producto", command=agregar).grid(row=2, column=0, pady=5, padx=5, sticky="e")
+                tk.Button(frame_combos, text="Regresar al menú anterior", command=regresar).grid(row=2, column=1, pady=5, padx=5, sticky="e")
+
+            def menu():
+                self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
+                self.segundaventana.labelDescripcionProceso.config(text=f"Orden id: {orden.getId()}\nSupermercado: {orden.getSupermercado().getNombre()}\nEmpleado: {orden.getEmpleado().getNombre()}\nCliente: {orden.getCliente().getNombre()}")
+                self.segundaventana.frameProceso.grid_forget()
+                self.segundaventana.frameProceso.grid(row=2, column=0, sticky="new", pady=(2.5, 5), padx=5)
+
+                frame_orden = tk.Frame(self.segundaventana.frameProceso, bd=3, relief="raised")
+                frame_botones = tk.Frame(self.segundaventana.frameProceso, bd=3, relief="raised")
+                frame_inferior = tk.Frame(self.segundaventana.frameProceso)
+                frame_inferior.pack(side="bottom", expand=True)
+                frame_orden.pack(side="right", fill="both", expand=True)
+                frame_botones.pack(side="left", fill="y")
+                
+
+                tk.Label(frame_orden, text=f"Precio total: ${orden.calcularPrecioTotal()}").pack(side="bottom", fill="x", expand=True)
+                listbox1 = tk.Listbox(frame_orden, height=20)
+                scrollbar1 = tk.Scrollbar(frame_orden, orient="vertical")
+                scrollbar1.config(command=listbox1.yview)
+                listbox1.config(yscrollcommand=scrollbar1.set)
+                scrollbar1.pack(side="right", fill="y")
+                listbox1.pack(side="left", fill="both", expand=True)
+
+                # Botones
+                tk.Button(frame_botones, text="Agregar Productos", command=agregarProducto).grid(row=0, column=0, pady=10, padx=10)
+                tk.Button(frame_botones, text="Quitar Productos", command=crearOrden).grid(row=1, column=0, pady=10, padx=10)
+                tk.Button(frame_inferior, text="Completar Orden", command=crearOrden).grid(row=0, column=0, sticky="e", pady=10, padx=10)
+                tk.Button(frame_inferior, text="Cancelar Orden", command=crearOrden).grid(row=0, column=1, sticky="w", pady=10, padx=10)
+
+                for i, unidad in enumerate(self.orden.getProductos(), start=1):
+                    if not unidad.isOferta():
+                        listbox1.insert("end", f"{unidad.getTipo().getNombre()} ${unidad.calcularPrecio()}")
+                    else:
+                        listbox1.insert("end", f"{unidad.getTipo().getNombre()} {unidad.calcularOferta().getNombre()}({unidad.calcularOferta().getPorcentajeDescuento()}%) ${unidad.calcularPrecio()}")
+
+            menu()
+
         def crearOrden():
             if self.supsel and self.empsel and self.clisel:
                 self.orden = Orden(self.supsel, self.empsel, self.clisel)
+                menuOrden(self.orden)
             else:
                 messagebox.showwarning("Advertencia", "Seleccione al menos un valor en cada campo.")
 
