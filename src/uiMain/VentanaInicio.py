@@ -5,14 +5,6 @@ from baseDatos.Serializacion import Serializacion
 import os
 import sys
 
-def resource_path(relative_path):
-    """ Obtiene la ruta absoluta del recurso, considerando si estamos empaquetados o no. """
-    if hasattr(sys, '_MEIPASS'):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
 
 class VentanaInicio(tk.Tk):
 
@@ -81,12 +73,12 @@ class VentanaInicio(tk.Tk):
 
     def inicializarRutasFotos(self): # Funcion para crear todas las rutas a las fotos que van en el frameP6
         self.rutasFotos = [
-            [resource_path(f"src/fotos/p61{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
-            [resource_path(f"src/fotos/p62{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
-            [resource_path(f"src/fotos/p63{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
-            [resource_path(f"src/fotos/p64{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p61{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p62{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p63{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
+            [os.path.join(f"src/fotos/p64{nombre}.jpg") for nombre in ["Jose", "Oscar", "Simon", "Julian"]],
         ]
-        self.rutasFotosP4 = [resource_path(f"src/fotos/p4{i}.jpg") for i in range(1,6)]
+        self.rutasFotosP4 = [os.path.join(f"src/fotos/p4{i}.jpg") for i in range(1,6)]
 
     def crearFrames(self): # Se crean los dos frames grandes p1 y p2 y luego se llaman las funciones para los frames internos
         # Frame P1 (izquierda)
