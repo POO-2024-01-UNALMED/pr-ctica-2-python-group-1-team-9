@@ -93,3 +93,7 @@ class Unidad:
 
     def setEnPaquete(self, en_paquete: bool):
         self.en_paquete = en_paquete
+
+    def __str__(self):
+        tipo_str = str(self.getTipo())  # Llama al método getTipo y convierte a string
+        return (f"{self.diasParaVencimiento()})")

@@ -406,11 +406,13 @@ class Aplicacion():
                 frame_flechas = tk.Frame(self.frame_productos)
                 frame_flechas.pack(side="left", padx=10, pady=10)
 
-                boton_derecha = tk.Button(frame_flechas, text="-->", command=lambda: mover_producto(self.listbox1, self.listbox2))
+                boton_derecha = tk.Button(frame_flechas, text="-->", command=lambda: mover_producto(self.listbox1, self.listbox2, supermercado1, supermercado2))
                 boton_derecha.pack(pady=5)
 
-                boton_izquierda = tk.Button(frame_flechas, text="<--", command=lambda: mover_producto(self.listbox2, self.listbox1))
+
+                boton_izquierda = tk.Button(frame_flechas, text="<--", command=lambda: mover_producto(self.listbox2, self.listbox1, supermercado2, supermercado1))
                 boton_izquierda.pack(pady=5)
+
 
                 frame_supermercado2 = tk.Frame(self.frame_productos)
                 frame_supermercado2.pack(side="right", fill="y", padx=10, pady=10)
@@ -468,19 +470,44 @@ class Aplicacion():
             except ExceptionInventada3 as e:
                 messagebox.showwarning("Advertencia", str(e))
 
-        def mover_producto(source_listbox, target_listbox):
+        def mover_producto(source_listbox, target_listbox, supermercado_origen, supermercado_destino):
+            # Obtener la selección en la Listbox de origen
             selected_item = source_listbox.curselection()
 
             try:
                 if not selected_item:
                     raise ExceptionInventada3("No se ha seleccionado ningún producto para mover.")
-                
-                producto = source_listbox.get(selected_item)
-                target_listbox.insert("end", producto)
-                source_listbox.delete(selected_item)
-                
+
+                # Obtener el índice del producto seleccionado
+                index = selected_item[0]
+
+                # Obtener el producto desde la bodega del supermercado origen
+                unidad = None
+                for bodega in supermercado_origen.getBodegas():
+                    if index < len(bodega.getProductos()):
+                        unidad = bodega.getProductos().pop(index)
+                        break
+                    index -= len(bodega.getProductos())
+
+                print(f"Tipo del objeto movido: {type(unidad)}")  # Depuración: imprime el tipo del objeto
+                print(f"Objeto unidad: {unidad}")  # Depuración: imprime el objeto en sí
+
+                if unidad is None:
+                    raise Exception("Producto no encontrado en la bodega.")
+
+                # Insertar el producto en la bodega del supermercado destino
+                for bodega in supermercado_destino.getBodegas():
+                    bodega.getProductos().append(unidad)
+                    break  # Suponemos que lo añadimos a la primera bodega disponible
+
+                # Mover el string correspondiente en las Listbox
+                producto_str = source_listbox.get(selected_item)  # Obtiene el texto de la Listbox
+                target_listbox.insert("end", producto_str)  # Inserta en la Listbox de destino
+                source_listbox.delete(selected_item)  # Elimina el producto de la Listbox de origen
+
             except ExceptionInventada3 as e:
                 messagebox.showwarning("Advertencia", str(e))
+
 
         self.frame1 = tk.Frame(self.segundaventana.frameProceso, bg="#ffffff")
         self.frame1.pack(expand=True, fill="both", padx=10, pady=10)
