@@ -327,6 +327,7 @@ class Aplicacion():
 
 
     def terceraFuncion(self):
+        self.segundaventana.limpiarFrame(self.segundaventana.frameProceso)
         self.mostrarFucionalidades("Intercambio de Productos", "Seleccione dos supermercados para realizar un intercambio de productos entre estos.")
         
         def supSelect(event):
@@ -336,6 +337,7 @@ class Aplicacion():
             self.combosup2.set('')
 
         def mostrar_productos():
+            self.limpiarFrame(self.frame_productos)
             # Limpiar el frame de productos antes de agregar nuevos elementos
             self.limpiarFrame(self.frame_productos)
 
@@ -409,6 +411,9 @@ class Aplicacion():
                     productos_supermercado1 = [listbox1.get(i) for i in range(listbox1.size())]
                     productos_supermercado2 = [listbox2.get(i) for i in range(listbox2.size())]
 
+                    print(f"{len(productos_supermercado1)}")
+                    print(f"{len(productos_supermercado2)}")
+
                     supermercado1_bodegas = [bodega for bodega in supermercado1.getBodegas()]
                     supermercado2_bodegas = [bodega for bodega in supermercado2.getBodegas()]
 
@@ -461,8 +466,6 @@ class Aplicacion():
 
         self.frame_productos = tk.Frame(self.frame1)
         self.frame_productos.grid(row=3, column=0, columnspan=2, pady=10, padx=5, sticky="nsew")
-
-
 
 
 
